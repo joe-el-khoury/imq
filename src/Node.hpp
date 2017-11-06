@@ -12,8 +12,8 @@ private:
   zmqpp::context ctx_;
   // The client socket sends reqs to other nodes, while the server socket
   // responds to reqs from other nodes.
-  zmqpp::socket client_socket_;
-  zmqpp::socket server_socket_;
+  zmqpp::socket* client_socket_;
+  zmqpp::socket* server_socket_;
 
 public:
   Node (unsigned);
