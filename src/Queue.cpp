@@ -1,6 +1,6 @@
-#include "Queue.hpp"
-
 #include <stdexcept>
+
+#include "Queue.hpp"
 
 template<typename T>
 unsigned Queue<T>::Size()
@@ -18,7 +18,7 @@ template<typename T>
 const T& Queue<T>::Pop ()
 {
   if (Size() == 0) {
-    throw std::out_of_range("");
+    throw std::out_of_range("Cannot pop from empty queue.");
   }
 
   const T& popped = queue_.front();
