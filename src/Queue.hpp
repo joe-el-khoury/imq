@@ -1,3 +1,6 @@
+#ifndef QUEUE_HPP
+#define QUEUE_HPP
+
 #include <queue>
 
 template<typename T>
@@ -12,3 +15,5 @@ public:
   void Push (const T&);
   const T& Pop ();
 };
+
+#endif // QUEUE_HPP
