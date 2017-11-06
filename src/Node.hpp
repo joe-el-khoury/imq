@@ -15,6 +15,13 @@ private:
   zmqpp::socket* client_socket_;
   zmqpp::socket* server_socket_;
 
+  // For health checks.
+  unsigned heartbeat_port_ = 2000;
+
+  zmqpp::socket* heartbeat_socket_;
+
+  void InitAndBindSocket (zmqpp::socket*, zmqpp::socket_type, unsigned);
+
 public:
   Node (unsigned);
 };
