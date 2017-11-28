@@ -22,3 +22,11 @@ IMQNode::IMQNode (unsigned server_port) : server_port_(server_port)
   // even need it.
   InitAndBindSocket(server_socket_, zmqpp::socket_type::pair, server_port_);
 }
+
+void IMQNode::Run ()
+{
+  running_.store(true);
+  while (running_.load()) {
+    // Do stuff
+  }
+}
