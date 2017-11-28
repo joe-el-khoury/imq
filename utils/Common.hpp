@@ -6,22 +6,21 @@
 namespace utils
 {
 
-std::string ConstructTCPBindAddress (unsigned port)
+inline std::string ConstructTCPBindAddress (unsigned port)
 {
   return "tcp://*:" + std::to_string(port);
 }
 
-void InitAndBindSocket (zmqpp::context& ctx, zmqpp::socket* socket, zmqpp::socket_type socket_type, unsigned port_to_bind_to)
+inline zmqpp::socket* GetInitSocket (zmqpp::context& ctx, zmqpp::socket_type socket_type)
 {
-  socket = new zmqpp::socket(ctx, socket_type);
-  std::string address = ConstructTCPBindAddress(port_to_bind_to);
-  socket->bind(address);
+  return new zmqpp::socket(ctx, socket_type);
 }
 
-void InitAndBindSocket (zmqpp::context& ctx, zmqpp::socket* socket, zmqpp::socket_type socket_type, const std::string& address)
+inline void BindSocket (zmqpp::socket* socket, unsigned port_to_bind_to)
 {
-  socket = new zmqpp::socket(ctx, socket_type);
-  socket->bind(address);
+  if (socket) {
+    socket->bind(ConstructTCPBindAddress(port_to_bind_to));
+  }
 }
 
 }
