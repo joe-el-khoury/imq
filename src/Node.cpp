@@ -18,12 +18,7 @@ void Node::InitAndBindSocket (zmqpp::socket* socket, zmqpp::socket_type socket_t
 
 Node::Node (unsigned server_port) : server_port_(server_port)
 {
-  if (server_port_ == heartbeat_port_) {
-    throw std::invalid_argument("Port is reserved for health checks.");
-  }
-  
-  // Init the server and health socket. Do not init the client socket because we might not
+  // Init the server socket. Do not init the client socket because we might not
   // even need it.
   InitAndBindSocket(server_socket_, zmqpp::socket_type::pair, server_port_);
-  InitAndBindSocket(heartbeat_socket_, zmqpp::socket_type::stream, heartbeat_port_);
 }
