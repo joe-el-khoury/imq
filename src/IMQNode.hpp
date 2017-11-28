@@ -3,7 +3,7 @@
 
 #include <zmqpp/zmqpp.hpp>
 
-class Node
+class IMQNode
 {
 private:
   // The port we're currently listening on.
@@ -18,7 +18,7 @@ private:
   void InitAndBindSocket (zmqpp::socket*, zmqpp::socket_type, unsigned);
 
 public:
-  Node (unsigned);
+  IMQNode (unsigned);
 };
 
 #endif // NODE_HPP
