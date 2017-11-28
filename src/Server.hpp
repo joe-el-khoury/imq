@@ -15,6 +15,9 @@ protected:
   using json = nlohmann::json;
 
   using Request = std::function<json(const json)>;
+  using Response = json;
+
+  void AddRequest (const std::string&, const Request&);
 
 private:
   unsigned port_;
@@ -29,8 +32,6 @@ public:
   ~Server ();
 
   void RunServer ();
-
-  void AddRequest (const std::string&, const Request&);
 };
 
 #endif // SERVER_HPP
