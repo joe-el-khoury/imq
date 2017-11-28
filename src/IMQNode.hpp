@@ -19,8 +19,6 @@ private:
   zmqpp::socket* server_socket_;
 
   std::atomic<bool> running_;
-  
-  void InitAndBindSocket (zmqpp::socket*, zmqpp::socket_type, unsigned);
 
   void Run ();
 
