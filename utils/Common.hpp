@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <string>
+
 #include <zmqpp/zmqpp.hpp>
 
 namespace utils
@@ -20,6 +22,13 @@ inline void BindSocket (zmqpp::socket* socket, unsigned port_to_bind_to)
 {
   if (socket) {
     socket->bind(ConstructTCPBindAddress(port_to_bind_to));
+  }
+}
+
+inline void ConnectSocketTo (zmqpp::socket* socket, const std::string& address)
+{
+  if (socket) {
+    socket->connect(address);
   }
 }
 
