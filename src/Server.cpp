@@ -18,3 +18,8 @@ void Server::RunServer ()
 {
   server_socket_->bind("tcp://*" + std::to_string(port_));
 }
+
+void Server::AddRequest (const std::string& request_uri, const Request& request_func)
+{
+  requests_.insert({request_uri, request_func});
+}
