@@ -12,9 +12,9 @@ timepoint_t Heartbeater::Now ()
   return c::steady_clock::now();
 }
 
-timepoint_t Heartbeater::GetNextSendHeartbeatAt ()
+void Heartbeater::SetSendHeartbeatAt ()
 {
-  return Now() + HEARTBEAT_LIVENESS_S;
+  send_heartbeat_at_ = Now() + HEARTBEAT_LIVENESS_S;
 }
 
 bool Heartbeater::ShouldSendHeartbeat ()

@@ -31,7 +31,7 @@ private:
   timepoint_t send_heartbeat_at_;
   timepoint_t Now ();
 
-  timepoint_t GetNextSendHeartbeatAt ();
+  void SetSendHeartbeatAt ();
   
   bool ShouldSendHeartbeat ();
 
