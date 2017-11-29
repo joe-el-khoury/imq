@@ -12,6 +12,9 @@
 
 namespace c = std::chrono;
 
+using duration_t  = c::duration<double>;
+using timepoint_t = c::time_point<c::steady_clock, duration_t>;
+
 class Heartbeater
 {
 private:
@@ -22,15 +25,20 @@ private:
 
   std::atomic<bool> running_;
 
-  // If more than 3 seconds we assume the master is dead.
-  const unsigned HEARTBEAT_LIVENESS_S = 3;
+  // How long to wait between heartbeats.
+  c::duration<double> HEARTBEAT_LIVENESS_S = c::seconds(3);
 
-  c::time_point<c::steady_clock> Now ();
+  timepoint_t send_heartbeat_at_;
+  timepoint_t Now ();
+
+  timepoint_t GetNextSendHeartbeatAt ();
+  
+  bool ShouldSendHeartbeat ();
 
 public:
   Heartbeater (unsigned);
 
-  void Start ();
+  void StartSending ();
 };
 
 #endif // HEARTBEATER_HPP
