@@ -12,12 +12,9 @@
 
 namespace c = std::chrono;
 
-using duration_t  = c::duration<double>;
-using timepoint_t = c::time_point<c::steady_clock, duration_t>;
-
 class Heartbeater
 {
-private:
+protected:
   unsigned heartbeat_port_;
   
   zmqpp::context ctx_;
@@ -28,17 +25,8 @@ private:
   // How long to wait between heartbeats.
   c::duration<double> HEARTBEAT_LIVENESS_S = c::seconds(3);
 
-  timepoint_t send_heartbeat_at_;
-  timepoint_t Now ();
-
-  void SetSendHeartbeatAt ();
-  
-  bool ShouldSendHeartbeat ();
-
 public:
-  Heartbeater (unsigned);
-
-  void StartSending ();
+  virtual void Start () {}
 };
 
 #endif // HEARTBEATER_HPP
