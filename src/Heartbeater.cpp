@@ -24,8 +24,13 @@ bool Heartbeater::ShouldSendHeartbeat ()
 
 void Heartbeater::StartSending ()
 {
+  SetSendHeartbeatAt();
+  
   running_.store(true);
   while (running_.load()) {
-    // Send heartbeats.
+    if (ShouldSendHeartbeat()) {
+      // send heartbeat
+      SetSendHeartbeatAt();
+    }
   }
 }
