@@ -16,9 +16,9 @@ Server::~Server ()
   }
 }
 
-void Server::RunServer ()
+void Server::Run ()
 {
-  server_socket_->bind("tcp://*" + std::to_string(port_));
+  server_socket_->bind("tcp://*:" + std::to_string(port_));
 }
 
 void Server::AddRequest (const std::string& request_uri, const RequestFunc& request_func)

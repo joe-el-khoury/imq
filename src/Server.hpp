@@ -31,7 +31,7 @@ public:
   Server (unsigned);
   ~Server ();
 
-  void RunServer ();
+  void Run ();
 
   Response PerformRequest (const std::string&, const json&);
 };
