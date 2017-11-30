@@ -1,12 +1,18 @@
 #include "Server.hpp"
+#include "../utils/Common.hpp"
 
 #include <zmqpp/zmqpp.hpp>
 
 #include <stdexcept>
 
+Server::Server (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
+{
+  server_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::rep);
+}
+
 Server::Server (unsigned port) : port_(port), ctx_()
 {
-  server_socket_ = new zmqpp::socket(ctx_, zmqpp::socket_type::rep);
+  server_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::rep);
 }
 
 Server::~Server ()
@@ -18,7 +24,7 @@ Server::~Server ()
 
 void Server::Run ()
 {
-  server_socket_->bind("tcp://*:" + std::to_string(port_));
+  utils::BindSocket(server_socket_, host_, port_);
 }
 
 void Server::AddRequest (const std::string& request_uri, const RequestFunc& request_func)

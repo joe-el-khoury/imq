@@ -8,27 +8,39 @@
 namespace utils
 {
 
+inline std::string ConstructTCPBindAddress (const std::string& host, unsigned port)
+{
+  return "tcp://" + host + ":" + std::to_string(port);
+}
+
 inline std::string ConstructTCPBindAddress (unsigned port)
 {
   return "tcp://*:" + std::to_string(port);
 }
 
-inline zmqpp::socket* GetInitSocket (zmqpp::context& ctx, zmqpp::socket_type socket_type)
+inline zmqpp::socket* CreateSocket (zmqpp::context& ctx, zmqpp::socket_type socket_type)
 {
   return new zmqpp::socket(ctx, socket_type);
 }
 
-inline void BindSocket (zmqpp::socket* socket, unsigned port_to_bind_to)
+inline void BindSocket (zmqpp::socket* socket, const std::string& host, unsigned port)
 {
   if (socket) {
-    socket->bind(ConstructTCPBindAddress(port_to_bind_to));
+    socket->bind(ConstructTCPBindAddress(host, port));
   }
 }
 
-inline void ConnectSocketTo (zmqpp::socket* socket, const std::string& address)
+inline void BindSocket (zmqpp::socket* socket, unsigned port)
 {
   if (socket) {
-    socket->connect(address);
+    socket->bind(ConstructTCPBindAddress(port));
+  }
+}
+
+inline void ConnectSocket (zmqpp::socket* socket, const std::string& host, unsigned port)
+{
+  if (socket) {
+    socket->connect(ConstructTCPBindAddress(host, port));
   }
 }
 

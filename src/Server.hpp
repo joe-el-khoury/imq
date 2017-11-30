@@ -20,6 +20,7 @@ protected:
   void AddRequest (const std::string&, const RequestFunc&);
 
 private:
+  std::string host_ = "*";
   unsigned port_;
   
   zmqpp::context ctx_;
@@ -28,6 +29,7 @@ private:
   std::unordered_map<std::string, RequestFunc> requests_;
 
 public:
+  Server (const std::string&, unsigned);
   Server (unsigned);
   ~Server ();
 
