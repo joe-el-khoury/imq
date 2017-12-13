@@ -19,6 +19,8 @@ private:
 public:
   IMQNode (const std::string&, unsigned);
   IMQNode (unsigned);
+
+  ~IMQNode ();
 };
 
 #endif // NODE_HPP

@@ -15,6 +15,13 @@ IMQNode::IMQNode (unsigned server_port)
   server_ = new Server(server_port);
 }
 
+IMQNode::~IMQNode ()
+{
+  if (server_) {
+    delete server_;
+  }
+}
+
 void IMQNode::Run ()
 {
 }
