@@ -33,6 +33,9 @@ public:
   Server (unsigned);
   ~Server ();
 
+  std::string GetHost () { return host_; }
+  unsigned GetPort () { return port_; }
+
   void Run ();
 
   Response PerformRequest (const std::string&, const json&);
