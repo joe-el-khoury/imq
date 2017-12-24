@@ -9,17 +9,17 @@
 #include <string>
 #include <unordered_map>
 
+#include <thread>
+#include <atomic>
+
 class Server
 {
-protected:
+private:
   using json = nlohmann::json;
 
   using RequestFunc = std::function<json(const json)>;
   using Response = json;
 
-  void AddRequest (const std::string&, const RequestFunc&);
-
-private:
   std::string host_ = "*";
   unsigned port_;
   
@@ -28,17 +28,23 @@ private:
 
   std::unordered_map<std::string, RequestFunc> requests_;
 
+  void RunServer ();
+  
+  std::atomic<bool> running_;
+  std::thread* server_thread_;
+
 public:
+  void AddRPC (const std::string&, const RequestFunc&);
+  Response PerformRPC (const std::string&, const json&);
+
+  void Run ();
+  
   Server (const std::string&, unsigned);
   Server (unsigned);
   ~Server ();
 
   std::string GetHost () { return host_; }
   unsigned GetPort () { return port_; }
-
-  void Run ();
-
-  Response PerformRequest (const std::string&, const json&);
 };
 
 #endif // SERVER_HPP
