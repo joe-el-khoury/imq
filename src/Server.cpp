@@ -23,6 +23,25 @@ Server::~Server ()
   }
 }
 
+std::vector<std::string> Server::MessageIntoParts (zmqpp::message& message)
+{
+  int num_parts = message.parts();
+  if (num_parts == 0) {
+    return std::vector<std::string>();
+  }
+  
+  // A message can consist of multiple frames/parts.
+  std::vector<std::string> parts(num_parts, "");
+  for (int i = 0; i < num_parts; ++i) {
+    std::string part;
+    message >> part;
+
+    parts[i] = part;
+  }
+
+  return parts;
+}
+
 void Server::RunServer ()
 {
   utils::BindSocket(server_socket_, host_, port_);
@@ -31,21 +50,12 @@ void Server::RunServer ()
   while (true) {
     zmqpp::message received_message;
 
-    
     bool received = server_socket_->receive(received_message, /*dont_block*/ true);
     if (!received) {
       continue;
     }
 
-    // A message can consist of multiple frames or parts.
-    int num_parts = received_message.parts();
-    std::vector<std::string> message_parts(num_parts, "");
-    for (int part_number = 0; part_number < num_parts; ++part_number) {
-      std::string part;
-      received_message >> part;
-      
-      message_parts[part_number] = part;
-    }
+    std::vector<std::string> parts = MessageIntoParts(received_message);
     
     // crashes if we don't send anything.
     server_socket_->send("test");
