@@ -30,11 +30,25 @@ void Server::RunServer ()
 
   while (true) {
     zmqpp::message received_message;
-    bool received = server_socket_->receive(received_message, /*dont_block*/ true);
 
+    
+    bool received = server_socket_->receive(received_message, /*dont_block*/ true);
     if (!received) {
       continue;
     }
+
+    // A message can consist of multiple frames or parts.
+    int num_parts = received_message.parts();
+    std::vector<std::string> message_parts(num_parts, "");
+    for (int part_number = 0; part_number < num_parts; ++part_number) {
+      std::string part;
+      received_message >> part;
+      
+      message_parts[part_number] = part;
+    }
+    
+    // crashes if we don't send anything.
+    server_socket_->send("test");
   }
 }
 
