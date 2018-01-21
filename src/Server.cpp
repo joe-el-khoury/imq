@@ -43,18 +43,18 @@ void Server::Run ()
   server_thread_ = new std::thread(&Server::RunServer, this);
 }
 
-void Server::AddRPC (const std::string& request_uri, const RequestFunc& request_func)
+void Server::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
 {
-  requests_.insert({request_uri, request_func});
+  rpcs_.insert({rpc_name, rpc_func});
 }
 
-Server::Response Server::PerformRPC (const std::string& request, const json& args)
+Server::Response Server::PerformRPC (const std::string& rpc, const json& args)
 {
-  auto got = requests_.find(request);
-  if (got == requests_.end()) {
-    throw std::invalid_argument("Request " + request + " not supported");
+  auto got = rpcs_.find(rpc);
+  if (got == rpcs_.end()) {
+    throw std::invalid_argument("rpc " + rpc + " not supported");
   }
 
-  RequestFunc& func = got->second;
+  RPCFunc& func = got->second;
   return func(args);
 }

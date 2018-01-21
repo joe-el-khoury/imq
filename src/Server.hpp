@@ -17,7 +17,7 @@ class Server
 private:
   using json = nlohmann::json;
 
-  using RequestFunc = std::function<json(const json)>;
+  using RPCFunc = std::function<json(const json)>;
   using Response = json;
 
   std::string host_ = "*";
@@ -26,7 +26,7 @@ private:
   zmqpp::context ctx_;
   zmqpp::socket* server_socket_;
 
-  std::unordered_map<std::string, RequestFunc> requests_;
+  std::unordered_map<std::string, RPCFunc> rpcs_;
 
   void RunServer ();
   
@@ -34,7 +34,7 @@ private:
   std::thread* server_thread_;
 
 public:
-  void AddRPC (const std::string&, const RequestFunc&);
+  void AddRPC (const std::string&, const RPCFunc&);
   Response PerformRPC (const std::string&, const json&);
 
   void Run ();
