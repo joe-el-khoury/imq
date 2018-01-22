@@ -30,8 +30,15 @@ private:
 
   RPCFunc& GetRPC (const std::string&);
 
+  struct RPCAndArgs
+  {
+    bool valid;
+    std::string rpc;
+    json args;
+  };
+
   zmqpp::message ReceiveMessage (zmqpp::socket*);
-  std::vector<std::string> MessageIntoParts (zmqpp::message&);
+  RPCAndArgs MessageIntoParts (zmqpp::message&);
   void RunServer ();
   
   std::atomic<bool> running_;

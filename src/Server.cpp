@@ -40,23 +40,27 @@ zmqpp::message Server::ReceiveMessage (zmqpp::socket* socket)
   return received_message;
 }
 
-std::vector<std::string> Server::MessageIntoParts (zmqpp::message& message)
+Server::RPCAndArgs Server::MessageIntoParts (zmqpp::message& message)
 {
   int num_parts = message.parts();
   if (num_parts == 0) {
-    return std::vector<std::string>();
+    return {false, "", ""};
   }
+
+  RPCAndArgs ret;
   
-  // A message can consist of multiple frames/parts.
-  std::vector<std::string> parts(num_parts, "");
-  for (int i = 0; i < num_parts; ++i) {
-    std::string part;
-    message >> part;
+  std::string rpc;
+  message >> rpc;
+  ret.rpc = rpc;
 
-    parts[i] = part;
-  }
+  std::string args_str;
+  message >> args_str;
+  json args(args_str);
+  ret.args = args;
 
-  return parts;
+  ret.valid = true;
+
+  return ret;
 }
 
 void Server::RunServer ()
@@ -66,10 +70,9 @@ void Server::RunServer ()
 
   while (true) {
     zmqpp::message received_message = ReceiveMessage(server_socket_);
-    std::vector<std::string> parts = MessageIntoParts(received_message);
+    Server::RPCAndArgs rpc_and_args = MessageIntoParts(received_message);
     
-    // Means no message has been received.
-    if (parts.size() == 0) {
+    if (!rpc_and_args.valid) {
       continue;
     }
     
