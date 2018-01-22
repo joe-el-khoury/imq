@@ -23,6 +23,16 @@ Server::~Server ()
   }
 }
 
+Server::RPCFunc& Server::GetRPC (const std::string& rpc)
+{
+  auto got = rpcs_.find(rpc);
+  if (got == rpcs_.end()) {
+    throw std::invalid_argument("RPC " + rpc + " not found.");
+  }
+
+  return got->second;
+}
+
 zmqpp::message Server::ReceiveMessage (zmqpp::socket* socket)
 {
   zmqpp::message received_message;

@@ -28,6 +28,8 @@ private:
 
   std::unordered_map<std::string, RPCFunc> rpcs_;
 
+  RPCFunc& GetRPC (const std::string&);
+
   zmqpp::message ReceiveMessage (zmqpp::socket*);
   std::vector<std::string> MessageIntoParts (zmqpp::message&);
   void RunServer ();
