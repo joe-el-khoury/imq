@@ -23,6 +23,13 @@ Server::~Server ()
   }
 }
 
+zmqpp::message Server::ReceiveMessage (zmqpp::socket* socket)
+{
+  zmqpp::message received_message;
+  socket->receive(received_message, /*dont_block*/ true);
+  return received_message;
+}
+
 std::vector<std::string> Server::MessageIntoParts (zmqpp::message& message)
 {
   int num_parts = message.parts();
@@ -48,14 +55,13 @@ void Server::RunServer ()
   running_.store(true);
 
   while (true) {
-    zmqpp::message received_message;
-
-    bool received = server_socket_->receive(received_message, /*dont_block*/ true);
-    if (!received) {
+    zmqpp::message received_message = ReceiveMessage(server_socket_);
+    std::vector<std::string> parts = MessageIntoParts(received_message);
+    
+    // Means no message has been received.
+    if (parts.size() == 0) {
       continue;
     }
-
-    std::vector<std::string> parts = MessageIntoParts(received_message);
     
     // crashes if we don't send anything.
     server_socket_->send("test");
