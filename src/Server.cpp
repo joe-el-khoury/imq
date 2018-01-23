@@ -33,21 +33,29 @@ Server::RPCFunc& Server::GetRPC (const std::string& rpc)
   return got->second;
 }
 
-zmqpp::message Server::ReceiveMessage (zmqpp::socket* socket)
+Server::Message Server::ReceiveMessage (zmqpp::socket* socket)
 {
   zmqpp::message received_message;
-  socket->receive(received_message, /*dont_block*/ true);
-  return received_message;
+  bool received = socket->receive(received_message, /*dont_block*/ true);
+
+  Message message;
+  message.received = received;
+  message.message = std::move(received_message);
+  
+  return message;
 }
 
-Server::RPCAndArgs Server::MessageIntoParts (zmqpp::message& message)
+Server::RPCAndArgs Server::MessageIntoParts (Server::Message& struct_message)
 {
+  zmqpp::message message = std::move(struct_message.message);
+  
   int num_parts = message.parts();
-  if (num_parts == 0) {
+  if (num_parts == 0 || num_parts >= 3) {
     return {false, "", ""};
   }
 
   RPCAndArgs ret;
+  ret.valid = true;
   
   std::string rpc;
   message >> rpc;
@@ -55,10 +63,14 @@ Server::RPCAndArgs Server::MessageIntoParts (zmqpp::message& message)
 
   std::string args_str;
   message >> args_str;
-  json args(args_str);
+  json args;
+  try {
+    args = json::parse(args_str);
+  } catch (const std::invalid_argument& e) {
+    // Parse error.
+    ret.valid = false;
+  }
   ret.args = args;
-
-  ret.valid = true;
 
   return ret;
 }
@@ -68,16 +80,18 @@ void Server::RunServer ()
   utils::BindSocket(server_socket_, host_, port_);
   running_.store(true);
 
-  while (true) {
-    zmqpp::message received_message = ReceiveMessage(server_socket_);
-    Server::RPCAndArgs rpc_and_args = MessageIntoParts(received_message);
-    
-    if (!rpc_and_args.valid) {
+  while (running_.load()) {
+    Server::Message received_message = ReceiveMessage(server_socket_);
+    if (!received_message.received) {
       continue;
     }
     
-    // crashes if we don't send anything.
-    server_socket_->send("test");
+    Server::RPCAndArgs rpc_and_args = MessageIntoParts(received_message);
+    if (!rpc_and_args.valid) {
+      server_socket_->send("invalid");
+    } else {
+      server_socket_->send("valid");
+    }
   }
 }
 

@@ -37,8 +37,14 @@ private:
     json args;
   };
 
-  zmqpp::message ReceiveMessage (zmqpp::socket*);
-  RPCAndArgs MessageIntoParts (zmqpp::message&);
+  struct Message
+  {
+    bool received;
+    zmqpp::message message;
+  };
+
+  Message ReceiveMessage (zmqpp::socket*);
+  RPCAndArgs MessageIntoParts (Message&);
   void RunServer ();
   
   std::atomic<bool> running_;
