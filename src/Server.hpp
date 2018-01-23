@@ -41,10 +41,11 @@ private:
   {
     bool received;
     zmqpp::message message;
+
+    RPCAndArgs ToParts ();
   };
 
   Message ReceiveMessage (zmqpp::socket*);
-  RPCAndArgs MessageIntoParts (Message&);
   void RunServer ();
   
   std::atomic<bool> running_;

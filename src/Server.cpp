@@ -45,10 +45,8 @@ Server::Message Server::ReceiveMessage (zmqpp::socket* socket)
   return message;
 }
 
-Server::RPCAndArgs Server::MessageIntoParts (Server::Message& struct_message)
+Server::RPCAndArgs Server::Message::ToParts ()
 {
-  zmqpp::message message = std::move(struct_message.message);
-  
   int num_parts = message.parts();
   if (num_parts == 0 || num_parts >= 3) {
     return {false, "", ""};
@@ -86,7 +84,7 @@ void Server::RunServer ()
       continue;
     }
     
-    Server::RPCAndArgs rpc_and_args = MessageIntoParts(received_message);
+    Server::RPCAndArgs rpc_and_args = received_message.ToParts();
     if (!rpc_and_args.valid) {
       server_socket_->send("invalid");
     } else {
