@@ -45,11 +45,13 @@ Server::Message Server::ReceiveMessage (zmqpp::socket* socket)
   return message;
 }
 
-Server::RPCAndArgs Server::Message::ToParts ()
+Server::RPCAndArgs Server::MessageToParts (Message& struct_message)
 {
+  zmqpp::message& message = struct_message.message;
+  
   int num_parts = message.parts();
   if (num_parts == 0 || num_parts >= 3) {
-    return {false, "", ""};
+    return {false};
   }
 
   RPCAndArgs ret;
@@ -57,7 +59,12 @@ Server::RPCAndArgs Server::Message::ToParts ()
   
   std::string rpc;
   message >> rpc;
-  ret.rpc = rpc;
+  try {
+    ret.rpc = GetRPC(rpc);
+  } catch (const std::invalid_argument& e) {
+    // RPC doesn't exist
+    ret.valid = false;
+  }
 
   std::string args_str;
   message >> args_str;
@@ -76,15 +83,15 @@ Server::RPCAndArgs Server::Message::ToParts ()
 void Server::RunServer ()
 {
   utils::BindSocket(server_socket_, host_, port_);
+  
   running_.store(true);
-
   while (running_.load()) {
     Server::Message received_message = ReceiveMessage(server_socket_);
     if (!received_message.received) {
       continue;
     }
     
-    Server::RPCAndArgs rpc_and_args = received_message.ToParts();
+    Server::RPCAndArgs rpc_and_args = MessageToParts(received_message);
     if (!rpc_and_args.valid) {
       server_socket_->send("invalid");
     } else {

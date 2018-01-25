@@ -33,7 +33,8 @@ private:
   struct RPCAndArgs
   {
     bool valid;
-    std::string rpc;
+    
+    RPCFunc rpc;
     json args;
   };
 
@@ -41,9 +42,9 @@ private:
   {
     bool received;
     zmqpp::message message;
-
-    RPCAndArgs ToParts ();
   };
+  
+  RPCAndArgs MessageToParts (Message&);
 
   Message ReceiveMessage (zmqpp::socket*);
   void RunServer ();
