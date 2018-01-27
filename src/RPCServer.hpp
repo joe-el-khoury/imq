@@ -1,5 +1,5 @@
-#ifndef SERVER_HPP
-#define SERVER_HPP
+#ifndef RPCSERVER_HPP
+#define RPCSERVER_HPP
 
 #include "json.hpp"
 
@@ -12,7 +12,7 @@
 #include <thread>
 #include <atomic>
 
-class Server
+class RPCServer
 {
 private:
   using json = nlohmann::json;
@@ -58,12 +58,12 @@ public:
 
   void Run ();
   
-  Server (const std::string&, unsigned);
-  Server (unsigned);
-  ~Server ();
+  RPCServer (const std::string&, unsigned);
+  RPCServer (unsigned);
+  ~RPCServer ();
 
   std::string GetHost () { return host_; }
   unsigned GetPort () { return port_; }
 };
 
-#endif // SERVER_HPP
+#endif // RPCSERVER_HPP

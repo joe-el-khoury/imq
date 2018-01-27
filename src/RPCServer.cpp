@@ -1,21 +1,21 @@
-#include "Server.hpp"
+#include "RPCServer.hpp"
 #include "../utils/Common.hpp"
 
 #include <zmqpp/zmqpp.hpp>
 
 #include <stdexcept>
 
-Server::Server (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
+RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
 {
   server_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::rep);
 }
 
-Server::Server (unsigned port) : port_(port), ctx_()
+RPCServer::RPCServer (unsigned port) : port_(port), ctx_()
 {
   server_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::rep);
 }
 
-Server::~Server ()
+RPCServer::~RPCServer ()
 {
   server_thread_->join();
   if (server_socket_) {
@@ -23,7 +23,7 @@ Server::~Server ()
   }
 }
 
-Server::RPCFunc& Server::GetRPC (const std::string& rpc)
+RPCServer::RPCFunc& RPCServer::GetRPC (const std::string& rpc)
 {
   auto got = rpcs_.find(rpc);
   if (got == rpcs_.end()) {
@@ -33,7 +33,7 @@ Server::RPCFunc& Server::GetRPC (const std::string& rpc)
   return got->second;
 }
 
-Server::Message Server::ReceiveMessage (zmqpp::socket* socket)
+RPCServer::Message RPCServer::ReceiveMessage (zmqpp::socket* socket)
 {
   zmqpp::message received_message;
   bool received = socket->receive(received_message, /*dont_block*/ true);
@@ -45,7 +45,7 @@ Server::Message Server::ReceiveMessage (zmqpp::socket* socket)
   return message;
 }
 
-Server::RPCAndArgs Server::MessageToParts (Message& struct_message)
+RPCServer::RPCAndArgs RPCServer::MessageToParts (Message& struct_message)
 {
   zmqpp::message& message = struct_message.message;
   
@@ -80,18 +80,18 @@ Server::RPCAndArgs Server::MessageToParts (Message& struct_message)
   return ret;
 }
 
-void Server::RunServer ()
+void RPCServer::RunServer ()
 {
   utils::BindSocket(server_socket_, host_, port_);
   
   running_.store(true);
   while (running_.load()) {
-    Server::Message received_message = ReceiveMessage(server_socket_);
+    RPCServer::Message received_message = ReceiveMessage(server_socket_);
     if (!received_message.received) {
       continue;
     }
     
-    Server::RPCAndArgs rpc_and_args = MessageToParts(received_message);
+    RPCServer::RPCAndArgs rpc_and_args = MessageToParts(received_message);
     if (!rpc_and_args.valid) {
       server_socket_->send("invalid");
     } else {
@@ -105,17 +105,17 @@ void Server::RunServer ()
   }
 }
 
-void Server::Run ()
+void RPCServer::Run ()
 {
-  server_thread_ = new std::thread(&Server::RunServer, this);
+  server_thread_ = new std::thread(&RPCServer::RunServer, this);
 }
 
-void Server::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
+void RPCServer::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
 {
   rpcs_.insert({rpc_name, rpc_func});
 }
 
-Server::Response Server::PerformRPC (const std::string& rpc, const json& args)
+RPCServer::Response RPCServer::PerformRPC (const std::string& rpc, const json& args)
 {
   auto got = rpcs_.find(rpc);
   if (got == rpcs_.end()) {
