@@ -122,5 +122,3 @@ void RPCServer::Run ()
 {
   server_thread_ = new std::thread(&RPCServer::RunServer, this);
 }
-
-
