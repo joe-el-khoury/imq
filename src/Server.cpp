@@ -95,7 +95,12 @@ void Server::RunServer ()
     if (!rpc_and_args.valid) {
       server_socket_->send("invalid");
     } else {
-      server_socket_->send("valid");
+      RPCFunc& rpc = rpc_and_args.rpc;
+      json& args = rpc_and_args.args;
+
+      json result = rpc(args);
+      std::string result_as_string = result.dump();
+      server_socket_->send(result_as_string);
     }
   }
 }
