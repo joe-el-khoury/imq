@@ -23,6 +23,11 @@ RPCServer::~RPCServer ()
   }
 }
 
+void RPCServer::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
+{
+  rpcs_.insert({rpc_name, rpc_func});
+}
+
 RPCServer::RPCFunc& RPCServer::GetRPC (const std::string& rpc)
 {
   auto got = rpcs_.find(rpc);
@@ -31,6 +36,18 @@ RPCServer::RPCFunc& RPCServer::GetRPC (const std::string& rpc)
   }
 
   return got->second;
+}
+
+RPCServer::Response RPCServer::PerformRPC (const RPCAndArgs& rpc_and_args)
+{
+  if (!rpc_and_args.valid) {
+    return RPCServer::Response();
+  }
+
+  const RPCFunc& rpc = rpc_and_args.rpc;
+  const json& args = rpc_and_args.args;
+  
+  return rpc(args);
 }
 
 RPCServer::Message RPCServer::ReceiveMessage (zmqpp::socket* socket)
@@ -95,12 +112,8 @@ void RPCServer::RunServer ()
     if (!rpc_and_args.valid) {
       server_socket_->send("invalid");
     } else {
-      RPCFunc& rpc = rpc_and_args.rpc;
-      json& args = rpc_and_args.args;
-
-      json result = rpc(args);
-      std::string result_as_string = result.dump();
-      server_socket_->send(result_as_string);
+      RPCServer::Response response = PerformRPC(rpc_and_args);
+      server_socket_->send(response.dump());
     }
   }
 }
@@ -110,18 +123,4 @@ void RPCServer::Run ()
   server_thread_ = new std::thread(&RPCServer::RunServer, this);
 }
 
-void RPCServer::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
-{
-  rpcs_.insert({rpc_name, rpc_func});
-}
 
-RPCServer::Response RPCServer::PerformRPC (const std::string& rpc, const json& args)
-{
-  auto got = rpcs_.find(rpc);
-  if (got == rpcs_.end()) {
-    throw std::invalid_argument("rpc " + rpc + " not supported");
-  }
-
-  RPCFunc& func = got->second;
-  return func(args);
-}

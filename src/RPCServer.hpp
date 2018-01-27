@@ -44,6 +44,8 @@ private:
     zmqpp::message message;
   };
   
+  Response PerformRPC (const RPCAndArgs&);
+  
   RPCAndArgs MessageToParts (Message&);
 
   Message ReceiveMessage (zmqpp::socket*);
@@ -51,19 +53,18 @@ private:
   
   std::atomic<bool> running_;
   std::thread* server_thread_;
+  
+  std::string GetHost () { return host_; }
+  unsigned GetPort () { return port_; }
 
 public:
-  void AddRPC (const std::string&, const RPCFunc&);
-  Response PerformRPC (const std::string&, const json&);
-
-  void Run ();
-  
   RPCServer (const std::string&, unsigned);
   RPCServer (unsigned);
   ~RPCServer ();
+  
+  void AddRPC (const std::string&, const RPCFunc&);
 
-  std::string GetHost () { return host_; }
-  unsigned GetPort () { return port_; }
+  void Run ();
 };
 
 #endif // RPCSERVER_HPP
