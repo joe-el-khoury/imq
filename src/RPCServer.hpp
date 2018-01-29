@@ -53,14 +53,14 @@ private:
   
   std::atomic<bool> running_;
   std::thread* server_thread_;
-  
-  std::string GetHost () { return host_; }
-  unsigned GetPort () { return port_; }
 
 public:
   RPCServer (const std::string&, unsigned);
   RPCServer (unsigned);
   ~RPCServer ();
+  
+  const std::string& GetHost () const { return host_; }
+  unsigned GetPort () const { return port_; }
   
   void AddRPC (const std::string&, const RPCFunc&);
 
