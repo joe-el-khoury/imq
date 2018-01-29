@@ -1,7 +1,7 @@
 #ifndef RPCSERVER_HPP
 #define RPCSERVER_HPP
 
-#include "json.hpp"
+#include "../json.hpp"
 
 #include <zmqpp/zmqpp.hpp>
 

@@ -1,7 +1,7 @@
 #ifndef RPCCLIENT_HPP
 #define RPCCLIENT_HPP
 
-#include "json.hpp"
+#include "../json.hpp"
 
 #include "RPCServer.hpp"
 
