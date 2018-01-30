@@ -3,6 +3,8 @@
 
 #include "../json.hpp"
 
+#include "RPCUtils.hpp"
+
 #include <zmqpp/zmqpp.hpp>
 
 #include <vector>
@@ -37,18 +39,12 @@ private:
     RPCFunc rpc;
     json args;
   };
-
-  struct Message
-  {
-    bool received;
-    zmqpp::message message;
-  };
   
   Response PerformRPC (const RPCAndArgs&);
   
-  RPCAndArgs MessageToParts (Message&);
+  RPCAndArgs MessageToParts (rpc::utils::RPCMessage&);
 
-  Message ReceiveMessage (zmqpp::socket*);
+  rpc::utils::RPCMessage ReceiveMessage (zmqpp::socket*);
   void RunServer ();
   
   std::atomic<bool> running_;
