@@ -110,7 +110,7 @@ void RPCServer::RunServer ()
     
     RPCServer::RPCAndArgs rpc_and_args = MessageToParts(received_message);
     if (!rpc_and_args.valid) {
-      server_socket_->send("invalid");
+      server_socket_->send({"error", 1});
     } else {
       RPCServer::Response response = PerformRPC(rpc_and_args);
       server_socket_->send(response.dump());
