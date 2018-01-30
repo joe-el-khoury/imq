@@ -3,7 +3,7 @@
 
 #include "../json.hpp"
 
-#include "RPCUtils.hpp"
+#include "RPC.hpp"
 
 #include <zmqpp/zmqpp.hpp>
 
