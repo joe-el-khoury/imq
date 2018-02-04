@@ -1,4 +1,5 @@
 #include "RPCServer.hpp"
+#include "RPC.hpp"
 #include "../../utils/Common.hpp"
 
 #include <zmqpp/zmqpp.hpp>
@@ -50,18 +51,6 @@ RPCServer::Response RPCServer::PerformRPC (const RPCAndArgs& rpc_and_args)
   return rpc(args);
 }
 
-rpc::utils::RPCMessage RPCServer::ReceiveMessage (zmqpp::socket* socket)
-{
-  zmqpp::message received_message;
-  bool received = socket->receive(received_message, /*dont_block*/ true);
-
-  rpc::utils::RPCMessage message;
-  message.received = received;
-  message.message = std::move(received_message);
-  
-  return message;
-}
-
 RPCServer::RPCAndArgs RPCServer::MessageToParts (rpc::utils::RPCMessage& struct_message)
 {
   zmqpp::message& message = struct_message.message;
@@ -103,7 +92,7 @@ void RPCServer::RunServer ()
   
   running_.store(true);
   while (running_.load()) {
-    rpc::utils::RPCMessage received_message = ReceiveMessage(server_socket_);
+    rpc::utils::RPCMessage received_message = rpc::utils::ReceiveMessage(server_socket_);
     if (!received_message.received) {
       continue;
     }

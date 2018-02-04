@@ -43,8 +43,7 @@ private:
   Response PerformRPC (const RPCAndArgs&);
   
   RPCAndArgs MessageToParts (rpc::utils::RPCMessage&);
-
-  rpc::utils::RPCMessage ReceiveMessage (zmqpp::socket*);
+  
   void RunServer ();
   
   std::atomic<bool> running_;

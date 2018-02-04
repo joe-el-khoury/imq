@@ -1,5 +1,5 @@
-#ifndef RPCUTILS_HPP
-#define RPCUTILS_HPP
+#ifndef RPC_HPP
+#define RPC_HPP
 
 #include <zmqpp/zmqpp.hpp>
 
@@ -12,6 +12,8 @@ struct RPCMessage
   zmqpp::message message;
 };
 
+RPCMessage ReceiveMessage (zmqpp::socket* socket);
+
 }}
 
-#endif // RPCUTILS_HPP
+#endif // RPC_HPP
