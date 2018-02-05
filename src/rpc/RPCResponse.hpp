@@ -19,13 +19,18 @@ private:
   zmqpp::socket* socket_;
   std::thread* message_thread_;
 
-  std::function<void(const json)> message_callback_;
+  std::function<void(const json&)> message_callback_;
+  std::atomic<bool> did_callback_;
 
+  void DoCallback (zmqpp::message&);
   void CheckMessageReceipt ();
 
 public:
   RPCResponse (zmqpp::socket*);
   ~RPCResponse ();
+
+  // Register a callback for when a message is received.
+  void OnMessageReceipt (std::function<void(const json&)>);
 };
 
 #endif // RPCRESPONSE_HPP
