@@ -15,12 +15,14 @@ RPCResponse::~RPCResponse ()
 void RPCResponse::CheckMessageReceipt ()
 {
   while (true) {
-    bool received = socket_->receive(receieved_message_, /* dont_block */ true);
+    bool received = socket_->receive(received_message_, /* dont_block */ true);
     received_.store(received);
 
     if (received) {
-      // do something here
-      break;
+      std::string message_str;
+      received_message_ >> message_str;
+
+      message_callback_(json::parse(message_str));
     }
   }
 }

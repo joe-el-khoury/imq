@@ -6,14 +6,20 @@
 #include <thread>
 #include <atomic>
 
+#include "../json.hpp"
+
 class RPCResponse
 {
 private:
+  using json = nlohmann::json;
+  
   std::atomic<bool> received_;
-  zmqpp::message receieved_message_;
+  zmqpp::message received_message_;
 
   zmqpp::socket* socket_;
   std::thread* message_thread_;
+
+  std::function<void(const json)> message_callback_;
 
   void CheckMessageReceipt ();
 
