@@ -8,6 +8,8 @@
 
 #include "../json.hpp"
 
+namespace rpc { namespace utils {
+
 class RPCResponse
 {
 private:
@@ -32,5 +34,7 @@ public:
   // Register a callback for when a message is received.
   void OnMessageReceipt (std::function<void(const json&)>);
 };
+
+}}
 
 #endif // RPCRESPONSE_HPP
