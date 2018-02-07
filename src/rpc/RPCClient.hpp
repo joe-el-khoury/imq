@@ -4,6 +4,9 @@
 #include "../json.hpp"
 
 #include "RPCServer.hpp"
+#include "RPCResponse.hpp"
+
+#include <memory>
 
 #include <zmqpp/zmqpp.hpp>
 
@@ -11,10 +14,7 @@ class RPCClient
 {
 private:
   using json = nlohmann::json;
-
-  using RPCFunc = std::function<json(const json)>;
-  using Response = json;
-
+  
   std::string host_;
   unsigned port_;
   
@@ -26,7 +26,7 @@ public:
   RPCClient (const RPCServer&);
   ~RPCClient ();
 
-  Response Call (const std::string&, const json&);
+  rpc::utils::RPCResponse Call (const std::string&, const json&);
 };
 
 #endif // RPCCLIENT_HPP
