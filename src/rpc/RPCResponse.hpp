@@ -29,6 +29,7 @@ private:
 
 public:
   RPCResponse (zmqpp::socket*);
+  RPCResponse (const RPCResponse&);
   ~RPCResponse ();
 
   // Register a callback for when a message is received.

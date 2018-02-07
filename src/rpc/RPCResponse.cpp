@@ -7,6 +7,18 @@ rpc::utils::RPCResponse::RPCResponse (zmqpp::socket* socket) : socket_(socket)
   message_thread_ = new std::thread(&rpc::utils::RPCResponse::CheckMessageReceipt, this);
 }
 
+rpc::utils::RPCResponse::RPCResponse (const RPCResponse& other)
+{
+  received_.store(other.received_.load());
+  received_message_ = other.received_message_.copy();
+
+  socket_ = other.socket_;
+  message_thread_ = other.message_thread_;
+
+  message_callback_ = other.message_callback_;
+  did_callback_.store(other.did_callback_.load());
+}
+
 rpc::utils::RPCResponse::~RPCResponse ()
 {
   message_thread_->join();
