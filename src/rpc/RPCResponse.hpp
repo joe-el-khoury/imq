@@ -8,7 +8,7 @@
 
 #include "../json.hpp"
 
-namespace rpc { namespace utils {
+namespace rpc {
 
 class RPCResponse
 {
@@ -36,6 +36,6 @@ public:
   void OnMessageReceipt (std::function<void(const json&)>);
 };
 
-}}
+}
 
 #endif // RPCRESPONSE_HPP

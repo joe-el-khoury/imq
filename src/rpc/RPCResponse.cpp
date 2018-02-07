@@ -1,13 +1,13 @@
 #include "RPCResponse.hpp"
 
-rpc::utils::RPCResponse::RPCResponse (zmqpp::socket* socket) : socket_(socket)
+rpc::RPCResponse::RPCResponse (zmqpp::socket* socket) : socket_(socket)
 {
   received_.store(false);
   did_callback_.store(false);
-  message_thread_ = new std::thread(&rpc::utils::RPCResponse::CheckMessageReceipt, this);
+  message_thread_ = new std::thread(&rpc::RPCResponse::CheckMessageReceipt, this);
 }
 
-rpc::utils::RPCResponse::RPCResponse (const RPCResponse& other)
+rpc::RPCResponse::RPCResponse (const RPCResponse& other)
 {
   received_.store(other.received_.load());
   received_message_ = other.received_message_.copy();
@@ -19,13 +19,13 @@ rpc::utils::RPCResponse::RPCResponse (const RPCResponse& other)
   did_callback_.store(other.did_callback_.load());
 }
 
-rpc::utils::RPCResponse::~RPCResponse ()
+rpc::RPCResponse::~RPCResponse ()
 {
   message_thread_->join();
   delete message_thread_;
 }
 
-void rpc::utils::RPCResponse::DoCallback (zmqpp::message& message)
+void rpc::RPCResponse::DoCallback (zmqpp::message& message)
 {
   if (did_callback_.load()) {
     return;
@@ -39,7 +39,7 @@ void rpc::utils::RPCResponse::DoCallback (zmqpp::message& message)
   did_callback_.store(true);
 }
 
-void rpc::utils::RPCResponse::CheckMessageReceipt ()
+void rpc::RPCResponse::CheckMessageReceipt ()
 {
   while (true) {
     bool received = socket_->receive(received_message_, /* dont_block */ true);
@@ -51,7 +51,7 @@ void rpc::utils::RPCResponse::CheckMessageReceipt ()
   }
 }
 
-void rpc::utils::RPCResponse::OnMessageReceipt (std::function<void(const json&)> func)
+void rpc::RPCResponse::OnMessageReceipt (std::function<void(const json&)> func)
 {
   message_callback_ = func;
   if (received_.load()) {

@@ -26,7 +26,7 @@ public:
   RPCClient (const RPCServer&);
   ~RPCClient ();
 
-  rpc::utils::RPCResponse Call (const std::string&, const json&);
+  rpc::RPCResponse Call (const std::string&, const json&);
 };
 
 #endif // RPCCLIENT_HPP
