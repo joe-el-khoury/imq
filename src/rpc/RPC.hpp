@@ -3,8 +3,7 @@
 
 #include <zmqpp/zmqpp.hpp>
 
-namespace rpc { namespace utils
-{
+namespace rpc {
 
 struct RPCMessage
 {
@@ -14,6 +13,6 @@ struct RPCMessage
 
 RPCMessage ReceiveMessage (zmqpp::socket* socket);
 
-}}
+}
 
 #endif // RPC_HPP

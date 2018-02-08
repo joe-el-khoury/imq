@@ -42,7 +42,7 @@ private:
   
   Response PerformRPC (const RPCAndArgs&);
   
-  RPCAndArgs MessageToParts (rpc::utils::RPCMessage&);
+  RPCAndArgs MessageToParts (rpc::RPCMessage&);
   
   void RunServer ();
   

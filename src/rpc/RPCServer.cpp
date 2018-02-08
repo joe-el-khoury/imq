@@ -51,7 +51,7 @@ RPCServer::Response RPCServer::PerformRPC (const RPCAndArgs& rpc_and_args)
   return rpc(args);
 }
 
-RPCServer::RPCAndArgs RPCServer::MessageToParts (rpc::utils::RPCMessage& struct_message)
+RPCServer::RPCAndArgs RPCServer::MessageToParts (rpc::RPCMessage& struct_message)
 {
   zmqpp::message& message = struct_message.message;
   
@@ -92,7 +92,7 @@ void RPCServer::RunServer ()
   
   running_.store(true);
   while (running_.load()) {
-    rpc::utils::RPCMessage received_message = rpc::utils::ReceiveMessage(server_socket_);
+    rpc::RPCMessage received_message = rpc::ReceiveMessage(server_socket_);
     if (!received_message.received) {
       continue;
     }
