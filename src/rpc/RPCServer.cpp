@@ -8,18 +8,18 @@
 
 void RPCServer::InitSockets ()
 {
-  frontend_ = utils::CreateSocket(ctx_, zmqpp::socket_type::router);
-  backend_ = utils::CreateSocket(ctx_, zmqpp::socket_type::dealer);
-}
-
-RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
-{
-  InitSockets();
+  server_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::router);
 }
 
 void RPCServer::InitWorkerPool ()
 {
   worker_pool_ = new rpc::RPCServerWorkerPool(num_workers_);
+}
+
+RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
+{
+  InitSockets();
+  InitWorkerPool();
 }
 
 RPCServer::RPCServer (unsigned port) : port_(port), ctx_()
@@ -31,8 +31,8 @@ RPCServer::RPCServer (unsigned port) : port_(port), ctx_()
 RPCServer::~RPCServer ()
 {
   server_thread_->join();
-  if (frontend_) {
-    delete frontend_;
+  if (server_socket_) {
+    delete server_socket_;
   }
 }
 
@@ -43,11 +43,11 @@ void RPCServer::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
 
 void RPCServer::RunServer ()
 {
-  utils::BindSocket(frontend_, host_, port_);
+  utils::BindSocket(server_socket_, host_, port_);
   
   running_.store(true);
   while (running_.load()) {
-    rpc::RPCMessage received_message = rpc::ReceiveMessage(frontend_);
+    rpc::RPCMessage received_message = rpc::ReceiveMessage(server_socket_);
     if (!received_message.received) {
       continue;
     }

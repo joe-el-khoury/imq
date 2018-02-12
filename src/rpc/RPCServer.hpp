@@ -21,8 +21,7 @@ private:
   unsigned port_;
   
   zmqpp::context ctx_;
-  zmqpp::socket* backend_;
-  zmqpp::socket* frontend_;
+  zmqpp::socket* server_socket_;
   void InitSockets ();
 
   // the number of workers can be tweaked later.
