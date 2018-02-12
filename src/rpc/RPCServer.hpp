@@ -4,12 +4,9 @@
 #include "../json.hpp"
 
 #include "RPC.hpp"
+#include "RPCServerWorkerPool.hpp"
 
 #include <zmqpp/zmqpp.hpp>
-
-#include <vector>
-#include <string>
-#include <unordered_map>
 
 #include <thread>
 #include <atomic>
@@ -18,32 +15,21 @@ class RPCServer
 {
 private:
   using json = nlohmann::json;
-
   using RPCFunc = std::function<json(const json)>;
-  using Response = json;
 
   std::string host_ = "*";
   unsigned port_;
   
   zmqpp::context ctx_;
-  zmqpp::socket* server_socket_;
+  zmqpp::socket* backend_;
+  zmqpp::socket* frontend_;
+  void InitSockets ();
 
-  std::unordered_map<std::string, RPCFunc> rpcs_;
+  // the number of workers can be tweaked later.
+  const unsigned num_workers_ = 4;
+  rpc::RPCServerWorkerPool* worker_pool_;
+  void InitWorkerPool ();
 
-  RPCFunc& GetRPC (const std::string&);
-
-  struct RPCAndArgs
-  {
-    bool valid;
-    
-    RPCFunc rpc;
-    json args;
-  };
-  
-  Response PerformRPC (const RPCAndArgs&);
-  
-  RPCAndArgs MessageToParts (rpc::RPCMessage&);
-  
   void RunServer ();
   
   std::atomic<bool> running_;
