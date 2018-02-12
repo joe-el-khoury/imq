@@ -52,9 +52,10 @@ void RPCServer::RunServer ()
       continue;
     }
 
-    std::cout << "pushing" << std::endl;
     worker_pool_->PushMessage(received_message);
-    std::cout << "pushed" << std::endl;
+
+    // For now so we don't crash.
+    server_socket_->send("done");
   }
 }
 
