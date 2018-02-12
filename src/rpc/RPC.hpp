@@ -9,6 +9,19 @@ struct RPCMessage
 {
   bool received;
   zmqpp::message message;
+
+  RPCMessage () {
+    received = false;
+  }
+
+  RPCMessage (const RPCMessage& other) {
+    received = other.received;
+    message = other.message.copy();
+  }
+  RPCMessage (RPCMessage& other) {
+    received = other.received;
+    message = other.message.copy();
+  }
 };
 
 RPCMessage ReceiveMessage (zmqpp::socket* socket);
