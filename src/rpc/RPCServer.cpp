@@ -8,7 +8,7 @@
 
 void RPCServer::InitSockets ()
 {
-  server_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::router);
+  server_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::rep);
 }
 
 void RPCServer::InitWorkerPool ()
