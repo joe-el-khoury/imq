@@ -43,7 +43,7 @@ private:
 public:
   RPCServerWorkerPool (unsigned);
 
-  void PushMessage (rpc::RPCMessage& x) { std::cout << "x: " << x.message.parts() << std::endl; std::lock_guard<std::mutex> lk(task_queue_mutex_); task_queue_.push(x); cv_.notify_one(); };
+  void PushMessage (rpc::RPCMessage&);
   void AddRPC (const std::string&, const RPCFunc&);
 };
 

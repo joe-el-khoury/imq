@@ -7,6 +7,13 @@ rpc::RPCServerWorkerPool::RPCServerWorkerPool (unsigned num_workers)
   }
 }
 
+void rpc::RPCServerWorkerPool::PushMessage (rpc::RPCMessage& message)
+{
+  std::lock_guard<std::mutex> lk(task_queue_mutex_);
+  task_queue_.push(message);
+  cv_.notify_one();
+}
+
 void rpc::RPCServerWorkerPool::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
 {
   rpcs_.insert({rpc_name, rpc_func});
@@ -62,9 +69,19 @@ std::thread* rpc::RPCServerWorkerPool::CreateServerWorker ()
   return new std::thread(
       [this]() {
         while (true) {
+          RPCAndArgs rpc_and_args;
+          
           {
-            // do stuff
+            std::unique_lock<std::mutex> lk(task_queue_mutex_);
+
+            cv_.wait(lk, [this]() { return task_queue_.size() != 0; });
+            rpc::RPCMessage rpc_message = task_queue_.front();
+            task_queue_.pop();
+
+            rpc_and_args = MessageToParts(rpc_message);
           }
+
+          // Execute the rpc here.
         }
       }
   );
