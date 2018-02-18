@@ -18,6 +18,11 @@ inline std::string ConstructTCPBindAddress (unsigned port)
   return "tcp://*:" + std::to_string(port);
 }
 
+inline std::string ConstructIPCBindAddress (const std::string& ipc_name)
+{
+  return "ipc://" + ipc_name + ".ipc";
+}
+
 inline zmqpp::socket* CreateSocket (zmqpp::context& ctx, zmqpp::socket_type socket_type)
 {
   return new zmqpp::socket(ctx, socket_type);
@@ -34,6 +39,13 @@ inline void BindSocket (zmqpp::socket* socket, unsigned port)
 {
   if (socket) {
     socket->bind(ConstructTCPBindAddress(port));
+  }
+}
+
+inline void BindIPCSocket (zmqpp::socket* socket, const std::string& ipc_name)
+{
+  if (socket) {
+    socket->bind(ConstructIPCBindAddress(ipc_name));
   }
 }
 
