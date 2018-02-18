@@ -19,9 +19,12 @@ private:
 
   std::string host_ = "*";
   unsigned port_;
+
+  std::string backend_ipc_name = "backend";
   
   zmqpp::context ctx_;
-  zmqpp::socket* server_socket_;
+  zmqpp::socket* frontend_;
+  zmqpp::socket* backend_;
   void InitSockets ();
 
   // the number of workers can be tweaked later.
