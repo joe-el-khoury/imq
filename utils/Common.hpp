@@ -56,6 +56,13 @@ inline void ConnectSocket (zmqpp::socket* socket, const std::string& host, unsig
   }
 }
 
+inline void ConnectIPCSocket (zmqpp::socket* socket, const std::string& ipc_name)
+{
+  if (socket) {
+    socket->connect(ConstructIPCBindAddress(ipc_name));
+  }
+}
+
 }
 
 #endif // COMMON_H
