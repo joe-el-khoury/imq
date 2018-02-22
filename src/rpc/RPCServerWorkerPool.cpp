@@ -34,12 +34,19 @@ rpc::RPCServerWorkerPool::RPCAndArgs rpc::RPCServerWorkerPool::MessageToParts (r
   zmqpp::message& message = struct_message.message;
   
   int num_parts = message.parts();
-  if (num_parts == 0 || num_parts >= 3) {
+  std::cout << num_parts << std::endl;
+  if (num_parts == 0 || num_parts > 4) {
+    // The message consists of [client-address] [empty] [rpc-name] [rpc-args]
     return {false};
   }
 
   RPCAndArgs ret;
   ret.valid = true;
+
+  std::string client_addr;
+  message >> client_addr;
+  std::string empty;
+  message >> empty;
   
   std::string rpc;
   message >> rpc;
