@@ -16,19 +16,21 @@ class RPCServerWorkerPool
 private:
   using json = nlohmann::json;
   using RPCFunc = std::function<json(const json)>;
-  using JSONResponse = json;
+  using RPCResult = json;
 
   std::unordered_map<std::string, RPCFunc> rpcs_;
-  
-  std::queue<rpc::RPCMessage> task_queue_;
-  std::mutex task_queue_mutex_;
-  std::condition_variable cv_;
 
+  std::string ipc_name_;
+
+  zmqpp::context ctx_;
   std::vector<std::thread*> server_workers_;
+  std::vector<zmqpp::socket*> worker_sockets_;
 
   struct RPCAndArgs
   {
     bool valid;
+
+    std::string client_addr;
     
     RPCFunc rpc;
     json args;
@@ -36,15 +38,21 @@ private:
   RPCAndArgs MessageToParts (rpc::RPCMessage&);
 
   RPCFunc& GetRPC (const std::string&);
-  JSONResponse PerformRPC (const RPCAndArgs&);
+  RPCResult PerformRPC (const RPCAndArgs&);
 
-  std::thread* CreateServerWorker ();
+  zmqpp::message ConstructMessage (const std::string&, const RPCResult&);
+  zmqpp::message ConstructErrorMessage (const std::string&);
+  
+  void Work (zmqpp::socket*);
+  std::thread* CreateServerWorker (zmqpp::socket*);
+  zmqpp::socket* CreateWorkerSocket ();
 
 public:
-  RPCServerWorkerPool (unsigned);
+  RPCServerWorkerPool (unsigned, const std::string&);
 
-  void PushMessage (rpc::RPCMessage&);
   void AddRPC (const std::string&, const RPCFunc&);
+  
+  void Start ();
 };
 
 }

@@ -20,7 +20,7 @@ private:
   std::string host_ = "*";
   unsigned port_;
 
-  std::string backend_ipc_name = "backend";
+  std::string backend_ipc_name_ = "backend";
   
   zmqpp::context ctx_;
   zmqpp::socket* frontend_;

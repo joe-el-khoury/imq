@@ -3,6 +3,7 @@
 #include "../../utils/Common.hpp"
 
 #include <zmqpp/zmqpp.hpp>
+#include <zmqpp/proxy.hpp>
 
 #include <stdexcept>
 
@@ -14,7 +15,7 @@ void RPCServer::InitSockets ()
 
 void RPCServer::InitWorkerPool ()
 {
-  worker_pool_ = new rpc::RPCServerWorkerPool(num_workers_);
+  worker_pool_ = new rpc::RPCServerWorkerPool(num_workers_, backend_ipc_name_);
 }
 
 RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
@@ -48,17 +49,12 @@ void RPCServer::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
 void RPCServer::RunServer ()
 {
   utils::BindSocket(frontend_, host_, port_);
-  utils::BindIPCSocket(backend_, backend_ipc_name);
-  
-  running_.store(true);
-  while (running_.load()) {
-    rpc::RPCMessage received_message = rpc::ReceiveMessage(frontend_);
-    if (!received_message.received) {
-      continue;
-    }
+  utils::BindIPCSocket(backend_, backend_ipc_name_);
 
-    worker_pool_->PushMessage(received_message);
-  }
+  // Always start the worker pool after binding the ipc socket.
+  worker_pool_->Start();
+  
+  zmqpp::proxy(*frontend_, *backend_); 
 }
 
 void RPCServer::Run ()

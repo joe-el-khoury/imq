@@ -1,17 +1,19 @@
 #include "RPCServerWorkerPool.hpp"
+#include "../../utils/Common.hpp"
 
-rpc::RPCServerWorkerPool::RPCServerWorkerPool (unsigned num_workers)
+rpc::RPCServerWorkerPool::RPCServerWorkerPool (unsigned num_workers, const std::string& ipc_name) : ipc_name_(ipc_name)
 {
-  for (unsigned i = 0; i < num_workers; ++i) {
-    server_workers_.push_back(CreateServerWorker());
-  }
+  worker_sockets_.resize(num_workers);
+  server_workers_.resize(num_workers);
 }
 
-void rpc::RPCServerWorkerPool::PushMessage (rpc::RPCMessage& message)
+void rpc::RPCServerWorkerPool::Start ()
 {
-  std::lock_guard<std::mutex> lk(task_queue_mutex_);
-  task_queue_.push(message);
-  cv_.notify_one();
+  unsigned num_workers = server_workers_.size();
+  for (unsigned i = 0; i < num_workers; ++i) {
+    worker_sockets_[i] = CreateWorkerSocket();
+    server_workers_[i] = CreateServerWorker(worker_sockets_[i]);
+  }
 }
 
 void rpc::RPCServerWorkerPool::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
@@ -29,13 +31,17 @@ rpc::RPCServerWorkerPool::RPCFunc& rpc::RPCServerWorkerPool::GetRPC (const std::
   return got->second;
 }
 
+rpc::RPCServerWorkerPool::RPCResult rpc::RPCServerWorkerPool::PerformRPC (const RPCAndArgs& rpc_and_args)
+{
+  return rpc_and_args.rpc(rpc_and_args.args);
+}
+
 rpc::RPCServerWorkerPool::RPCAndArgs rpc::RPCServerWorkerPool::MessageToParts (rpc::RPCMessage& struct_message)
 {
   zmqpp::message& message = struct_message.message;
   
   int num_parts = message.parts();
-  std::cout << num_parts << std::endl;
-  if (num_parts == 0 || num_parts > 4) {
+  if (num_parts == 0 || num_parts > 3) {
     // The message consists of [client-address] [empty] [rpc-name] [rpc-args]
     return {false};
   }
@@ -45,8 +51,8 @@ rpc::RPCServerWorkerPool::RPCAndArgs rpc::RPCServerWorkerPool::MessageToParts (r
 
   std::string client_addr;
   message >> client_addr;
-  std::string empty;
-  message >> empty;
+  
+  ret.client_addr = client_addr;
   
   std::string rpc;
   message >> rpc;
@@ -71,25 +77,59 @@ rpc::RPCServerWorkerPool::RPCAndArgs rpc::RPCServerWorkerPool::MessageToParts (r
   return ret;
 }
 
-std::thread* rpc::RPCServerWorkerPool::CreateServerWorker ()
+zmqpp::message rpc::RPCServerWorkerPool::ConstructMessage (const std::string& client_addr, const RPCResult& result)
 {
-  return new std::thread(
-      [this]() {
-        while (true) {
-          RPCAndArgs rpc_and_args;
-          
-          {
-            std::unique_lock<std::mutex> lk(task_queue_mutex_);
+  zmqpp::message msg;
+  
+  msg << client_addr;
+  msg << result.dump();
 
-            cv_.wait(lk, [this]() { return task_queue_.size() != 0; });
-            rpc::RPCMessage rpc_message = task_queue_.front();
-            task_queue_.pop();
+  return msg;
+}
 
-            rpc_and_args = MessageToParts(rpc_message);
-          }
+zmqpp::message rpc::RPCServerWorkerPool::ConstructErrorMessage (const std::string& client_addr)
+{
+  zmqpp::message msg;
 
-          // Execute the rpc here.
-        }
-      }
-  );
+  msg << client_addr;
+  msg << json({{"error", 1}}).dump();
+
+  return msg;
+}
+
+void rpc::RPCServerWorkerPool::Work (zmqpp::socket* worker_socket)
+{
+  while (true) {
+    RPCAndArgs rpc_and_args;
+
+    rpc::RPCMessage received_message = rpc::ReceiveMessage(worker_socket);
+    if (!received_message.received) {
+      continue;
+    }
+
+    rpc_and_args = MessageToParts(received_message);
+    std::string client_addr = rpc_and_args.client_addr;
+    
+    if (!rpc_and_args.valid) {
+      RPCResult result = PerformRPC(rpc_and_args);
+      zmqpp::message to_send = ConstructMessage(client_addr, result);
+      worker_socket->send(to_send);
+    } else {
+      zmqpp::message error_message = ConstructErrorMessage(client_addr);
+      worker_socket->send(error_message);
+    }
+  }
+}
+
+std::thread* rpc::RPCServerWorkerPool::CreateServerWorker (zmqpp::socket* worker_socket)
+{
+  return new std::thread(std::bind(&rpc::RPCServerWorkerPool::Work, this, worker_socket));
+}
+
+zmqpp::socket* rpc::RPCServerWorkerPool::CreateWorkerSocket ()
+{
+    zmqpp::socket* worker_socket = utils::CreateSocket(ctx_, zmqpp::socket_type::dealer);
+    utils::ConnectIPCSocket(worker_socket, ipc_name_);
+
+    return worker_socket;
 }
