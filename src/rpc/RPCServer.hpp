@@ -11,6 +11,8 @@
 #include <thread>
 #include <atomic>
 
+namespace rpc {
+
 class RPCServer
 {
 private:
@@ -49,5 +51,7 @@ public:
 
   void Run ();
 };
+
+} // namespace rpc
 
 #endif // RPCSERVER_HPP

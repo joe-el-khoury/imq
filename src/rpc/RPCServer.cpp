@@ -7,30 +7,30 @@
 
 #include <stdexcept>
 
-void RPCServer::InitSockets ()
+void rpc::RPCServer::InitSockets ()
 {
   frontend_ = utils::CreateSocket(ctx_, zmqpp::socket_type::router);
   backend_ = utils::CreateSocket(ctx_, zmqpp::socket_type::dealer);
 }
 
-void RPCServer::InitWorkerPool ()
+void rpc::RPCServer::InitWorkerPool ()
 {
   worker_pool_ = new rpc::RPCServerWorkerPool(num_workers_, backend_ipc_name_);
 }
 
-RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
+rpc::RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
 {
   InitSockets();
   InitWorkerPool();
 }
 
-RPCServer::RPCServer (unsigned port) : port_(port), ctx_()
+rpc::RPCServer::RPCServer (unsigned port) : port_(port), ctx_()
 {
   InitSockets();
   InitWorkerPool();
 }
 
-RPCServer::~RPCServer ()
+rpc::RPCServer::~RPCServer ()
 {
   server_thread_->join();
   if (frontend_) {
@@ -41,12 +41,12 @@ RPCServer::~RPCServer ()
   }
 }
 
-void RPCServer::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
+void rpc::RPCServer::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
 {
   worker_pool_->AddRPC(rpc_name, rpc_func);
 }
 
-void RPCServer::RunServer ()
+void rpc::RPCServer::RunServer ()
 {
   utils::BindSocket(frontend_, host_, port_);
   utils::BindIPCSocket(backend_, backend_ipc_name_);
@@ -57,7 +57,7 @@ void RPCServer::RunServer ()
   zmqpp::proxy(*frontend_, *backend_); 
 }
 
-void RPCServer::Run ()
+void rpc::RPCServer::Run ()
 {
-  server_thread_ = new std::thread(&RPCServer::RunServer, this);
+  server_thread_ = new std::thread(&rpc::RPCServer::RunServer, this);
 }
