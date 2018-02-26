@@ -15,11 +15,9 @@ class RPCClient
 private:
   using json = nlohmann::json;
   
-  std::string host_;
-  unsigned port_;
-  
   zmqpp::context ctx_;
   zmqpp::socket* client_socket_;
+  void InitSockets (const std::string&, unsigned);
 
 public:
   RPCClient (const std::string&, unsigned);
