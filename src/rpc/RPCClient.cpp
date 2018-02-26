@@ -3,23 +3,23 @@
 
 #include <zmqpp/zmqpp.hpp>
 
-void RPCClient::InitSockets (const std::string& host, unsigned port)
+void rpc::RPCClient::InitSockets (const std::string& host, unsigned port)
 {
   client_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::dealer);
   utils::ConnectSocket(client_socket_, host, port);
 }
 
-RPCClient::RPCClient (const std::string& host, unsigned port)
+rpc::RPCClient::RPCClient (const std::string& host, unsigned port)
 {
   InitSockets(host, port);
 }
 
-RPCClient::RPCClient (const RPCServer& rpc_server)
+rpc::RPCClient::RPCClient (const RPCServer& rpc_server)
 {
   InitSockets(rpc_server.GetHost(), rpc_server.GetPort());
 }
 
-rpc::RPCResponse RPCClient::Call (const std::string& rpc, const json& args)
+rpc::RPCResponse rpc::RPCClient::Call (const std::string& rpc, const json& args)
 {
   zmqpp::message message_to_send;
 
