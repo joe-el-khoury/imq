@@ -42,10 +42,10 @@ void rpc::RPCResponse::DoCallback (zmqpp::message& message)
 void rpc::RPCResponse::CheckMessageReceipt ()
 {
   while (true) {
-    bool received = socket_->receive(received_message_, /* dont_block */ true);
+    bool received = socket_->receive(received_message_);
     received_.store(received);
 
-    if (received) {
+    if (received_.load()) {
       DoCallback(received_message_);
     }
   }
