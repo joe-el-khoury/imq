@@ -110,7 +110,7 @@ void rpc::RPCServerWorkerPool::Work (zmqpp::socket* worker_socket)
     rpc_and_args = MessageToParts(received_message);
     std::string client_addr = rpc_and_args.client_addr;
     
-    if (!rpc_and_args.valid) {
+    if (rpc_and_args.valid) {
       RPCResult result = PerformRPC(rpc_and_args);
       zmqpp::message to_send = ConstructMessage(client_addr, result);
       worker_socket->send(to_send);
