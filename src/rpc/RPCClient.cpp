@@ -5,7 +5,7 @@
 
 void RPCClient::InitSockets (const std::string& host, unsigned port)
 {
-  client_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::req);
+  client_socket_ = utils::CreateSocket(ctx_, zmqpp::socket_type::dealer);
   utils::ConnectSocket(client_socket_, host, port);
 }
 
