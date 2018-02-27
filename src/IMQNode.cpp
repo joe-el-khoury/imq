@@ -7,18 +7,18 @@
 
 IMQNode::IMQNode (const std::string& host, unsigned server_port)
 {
-  server_ = new Server(host, server_port);
+  rpc_server_ = new rpc::RPCServer(host, server_port);
 }
 
 IMQNode::IMQNode (unsigned server_port)
 {
-  server_ = new Server(server_port);
+  rpc_server_ = new rpc::RPCServer(server_port);
 }
 
 IMQNode::~IMQNode ()
 {
-  if (server_) {
-    delete server_;
+  if (rpc_server_) {
+    delete rpc_server_;
   }
 }
 
