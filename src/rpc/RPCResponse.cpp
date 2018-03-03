@@ -47,6 +47,7 @@ void rpc::RPCResponse::CheckMessageReceipt ()
 
     if (received_.load()) {
       DoCallback(received_message_);
+      return;
     }
   }
 }
