@@ -27,6 +27,11 @@ rpc::RPCResponse::~RPCResponse ()
 
 void rpc::RPCResponse::DoCallback (zmqpp::message& message)
 {
+  if (!message_callback_) {
+    // To avoid getting a bad_function error when calling the callback.
+    return;
+  }
+  
   if (did_callback_.load()) {
     return;
   }
