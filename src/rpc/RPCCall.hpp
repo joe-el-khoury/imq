@@ -22,20 +22,20 @@ private:
   const std::string& rpc_;
   const json& args_;
 
-  const std::string& GetRPCName ();
-  const json& GetArgs ();
-
 public:
   RPCCall (const std::string&, const json&);
   
   void OnMessageReceipt (MessageCallback);
   void OnTimeout (unsigned, TimeoutCallback);
 
-  MessageCallback GetMessageCallback ();
-  TimeoutCallback GetTimeoutCallback ();
+  MessageCallback GetMessageCallback () const;
+  TimeoutCallback GetTimeoutCallback () const;
 
-  unsigned GetTimeoutDuration ();
-  bool TimeoutIsSet ();
+  unsigned GetTimeoutDuration () const;
+  bool TimeoutIsSet () const;
+
+  const std::string& GetRPCName () const;
+  const json& GetArgs () const;
 };
 
 } // namespace rpc

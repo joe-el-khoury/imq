@@ -16,22 +16,32 @@ void rpc::RPCCall::OnTimeout (unsigned timeout_duration, TimeoutCallback timeout
   timeout_callback_set_ = true;
 }
 
-rpc::RPCCall::MessageCallback rpc::RPCCall::GetMessageCallback ()
+rpc::RPCCall::MessageCallback rpc::RPCCall::GetMessageCallback () const
 {
   return message_receipt_callback_;
 }
 
-rpc::RPCCall::TimeoutCallback rpc::RPCCall::GetTimeoutCallback ()
+rpc::RPCCall::TimeoutCallback rpc::RPCCall::GetTimeoutCallback () const
 {
   return timeout_callback_;
 }
 
-unsigned rpc::RPCCall::GetTimeoutDuration ()
+unsigned rpc::RPCCall::GetTimeoutDuration () const
 {
   return timeout_duration_;
 }
 
-bool rpc::RPCCall::TimeoutIsSet ()
+bool rpc::RPCCall::TimeoutIsSet () const
 {
   return timeout_callback_set_;
+}
+
+const std::string& rpc::RPCCall::GetRPCName () const
+{
+  return rpc_;
+}
+
+const rpc::RPCCall::json& rpc::RPCCall::GetArgs () const
+{
+  return args_;
 }
