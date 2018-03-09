@@ -1,5 +1,9 @@
 #include "RPCCall.hpp"
 
+rpc::RPCCall::RPCCall (const std::string& rpc, const json& args)
+  : rpc_(rpc), args_(args)
+{}
+
 void rpc::RPCCall::OnMessageReceipt (MessageCallback message_receipt_callback)
 {
   message_receipt_callback_ = message_receipt_callback;

@@ -19,7 +19,15 @@ private:
   bool timeout_callback_set_ = false;
   TimeoutCallback timeout_callback_;
 
+  const std::string& rpc_;
+  const json& args_;
+
+  const std::string& GetRPCName ();
+  const json& GetArgs ();
+
 public:
+  RPCCall (const std::string&, const json&);
+  
   void OnMessageReceipt (MessageCallback);
   void OnTimeout (unsigned, TimeoutCallback);
 
