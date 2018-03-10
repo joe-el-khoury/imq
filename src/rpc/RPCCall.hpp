@@ -13,6 +13,7 @@ private:
   using MessageCallback = std::function<void(const json&)>;
   using TimeoutCallback = std::function<void()>;
 
+  bool message_callback_set_ = false;
   MessageCallback message_receipt_callback_;
   
   unsigned timeout_duration_ = 0;
@@ -28,14 +29,16 @@ public:
   void OnMessageReceipt (MessageCallback);
   void OnTimeout (unsigned, TimeoutCallback);
 
-  MessageCallback GetMessageCallback () const;
-  TimeoutCallback GetTimeoutCallback () const;
+  bool MessageCallbackIsSet () const { return message_callback_set_; }
 
-  unsigned GetTimeoutDuration () const;
-  bool TimeoutIsSet () const;
+  unsigned GetTimeoutDuration () const { return timeout_duration_; }
+  bool TimeoutIsSet () const { return timeout_callback_set_; }
 
-  const std::string& GetRPCName () const;
-  const json& GetArgs () const;
+  MessageCallback GetMessageCallback () const { return message_receipt_callback_; }
+  TimeoutCallback GetTimeoutCallback () const { return timeout_callback_; }
+
+  const std::string& GetRPCName () const { return rpc_; }
+  const json& GetArgs () const { return args_; }
 };
 
 } // namespace rpc
