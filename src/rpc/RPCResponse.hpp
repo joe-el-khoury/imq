@@ -6,6 +6,8 @@
 #include <thread>
 #include <atomic>
 
+#include "RPCCall.hpp"
+
 #include "../json.hpp"
 
 namespace rpc {
@@ -16,27 +18,25 @@ private:
   using json = nlohmann::json;
   
   std::atomic<bool> received_;
+  zmqpp::message received_message_;
 
   zmqpp::socket* socket_;
   std::thread* message_thread_;
 
-  std::function<void(const json&)> message_callback_;
-  std::atomic<bool> did_message_callback_;
-  void DoMessageCallback (zmqpp::message&);
+  // The RPC call we are responding to. It provides context we need to respond, like callbacks.
+  const rpc::RPCCall& rpc_call_;
   
   unsigned start_time_;
-  unsigned timeout_duration_ = 0;
   unsigned CurrentTime ();
   bool HasTimedOut ();
-  
-  std::function<void()> timeout_callback_;
-  bool timeout_callback_set_ = false;
+
+  void DoMessageCallback (zmqpp::message&);
   void DoTimeoutCallback ();
 
   void CheckMessageReceipt ();
 
 public:
-  RPCResponse (zmqpp::socket*);
+  RPCResponse (zmqpp::socket*, const rpc::RPCCall&);
   RPCResponse (const RPCResponse&);
   ~RPCResponse ();
 

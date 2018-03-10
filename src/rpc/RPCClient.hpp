@@ -6,6 +6,8 @@
 #include "RPCServer.hpp"
 #include "RPCResponse.hpp"
 
+#include "RPCCall.hpp"
+
 #include <zmqpp/zmqpp.hpp>
 
 namespace rpc {
@@ -24,7 +26,7 @@ public:
   RPCClient (const RPCServer&);
   ~RPCClient ();
 
-  rpc::RPCResponse Call (const std::string&, const json&);
+  rpc::RPCResponse Call (const RPCCall&);
 };
 
 } // namespace rpc

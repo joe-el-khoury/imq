@@ -19,14 +19,17 @@ rpc::RPCClient::RPCClient (const RPCServer& rpc_server)
   InitSockets(rpc_server.GetHost(), rpc_server.GetPort());
 }
 
-rpc::RPCResponse rpc::RPCClient::Call (const std::string& rpc, const json& args)
+rpc::RPCResponse rpc::RPCClient::Call (const RPCCall& rpc_call)
 {
   zmqpp::message message_to_send;
+
+  const std::string& rpc = rpc_call.GetRPCName();
+  const json& args = rpc_call.GetArgs();
 
   message_to_send.add(rpc);
   message_to_send.add(args.dump());
 
   client_socket_->send(message_to_send);
 
-  return rpc::RPCResponse(client_socket_);
+  return rpc::RPCResponse(client_socket_, rpc_call);
 }
