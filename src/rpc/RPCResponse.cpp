@@ -2,7 +2,8 @@
 
 #include <chrono>
 
-rpc::RPCResponse::RPCResponse (zmqpp::socket* socket, const rpc::RPCCall& rpc_call) : socket_(socket), rpc_call_(rpc_call)
+rpc::RPCResponse::RPCResponse (zmqpp::socket* socket, const rpc::RPCCall& rpc_call)
+  : socket_(socket), rpc_call_(rpc_call)
 {
   received_.store(false);
   message_thread_ = new std::thread(&rpc::RPCResponse::CheckMessageReceipt, this);
@@ -62,6 +63,8 @@ bool rpc::RPCResponse::HasTimedOut ()
 
 void rpc::RPCResponse::CheckMessageReceipt ()
 {
+  start_time_ = CurrentTime();
+  
   zmqpp::message received_message;
   while (true) {
     bool received = socket_->receive(received_message, true);
