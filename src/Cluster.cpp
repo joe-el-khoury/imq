@@ -1,6 +1,6 @@
 #include "Cluster.hpp"
 
-Cluster::AddNode (const std::string& hostname, unsigned port)
+void Cluster::AddNode (const std::string& hostname, unsigned port)
 {
   bool in_map = (nodes_.find(hostname) != nodes_.end());
 
