@@ -12,7 +12,15 @@ private:
   // Key is the hostname, value is the port.
   std::unordered_map<std::string, unsigned> nodes_;
 
+  Cluster ();
+
 public:
+  Cluster (const Cluster&) = delete;
+  void operator= (const Cluster&) = delete;
+
+  // Singleton.
+  static Cluster& GetInstance ();
+  
   void AddNode (const std::string&, unsigned port);
 };
 
