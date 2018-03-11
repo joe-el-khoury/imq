@@ -19,6 +19,7 @@ rpc::RPCResponse::RPCResponse (const RPCResponse& other) : rpc_call_(other.rpc_c
 
 rpc::RPCResponse::~RPCResponse ()
 {
+  running_.store(false);
   message_thread_->join();
   delete message_thread_;
 }
@@ -63,10 +64,11 @@ bool rpc::RPCResponse::HasTimedOut ()
 
 void rpc::RPCResponse::CheckMessageReceipt ()
 {
+  running_.store(true);
   start_time_ = CurrentTime();
   
   zmqpp::message received_message;
-  while (true) {
+  while (running_.load()) {
     bool received = socket_->receive(received_message, true);
     received_.store(received);
 

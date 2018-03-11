@@ -35,6 +35,8 @@ private:
 
   void CheckMessageReceipt ();
 
+  std::atomic<bool> running_;
+
 public:
   RPCResponse (zmqpp::socket*, const rpc::RPCCall&);
   RPCResponse (const RPCResponse&);
