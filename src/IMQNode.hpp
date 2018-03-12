@@ -9,14 +9,17 @@
 
 #include "rpc/RPCServer.hpp"
 
+#include "Cluster.hpp"
+
 class IMQNode
 {
 private:
   rpc::RPCServer* rpc_server_;
 
+  Cluster* cluster;
+
 public:
   IMQNode (const std::string&, unsigned);
-  IMQNode (unsigned);
   ~IMQNode ();
 
   void Run ();
