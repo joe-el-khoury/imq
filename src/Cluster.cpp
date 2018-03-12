@@ -9,11 +9,14 @@ Cluster& Cluster::GetInstance ()
   return instance;
 }
 
+bool Cluster::NodeInCluster (const std::string& hostname, unsigned port)
+{
+  return (nodes_.find(hostname) != nodes_.end());
+}
+
 void Cluster::AddNode (const std::string& hostname, unsigned port)
 {
-  bool in_map = (nodes_.find(hostname) != nodes_.end());
-
-  if (in_map) {
+  if (NodeInCluster(hostname, port)) {
     // We should just overwrite. This'll probably never happen though.
     nodes_[hostname] = port;
   } else {

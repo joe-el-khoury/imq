@@ -3,8 +3,6 @@
 
 #include <unordered_map>
 
-#include "IMQNode.hpp"
-
 class Cluster
 {
 private:
@@ -22,6 +20,7 @@ public:
   static Cluster& GetInstance ();
   
   void AddNode (const std::string&, unsigned port);
+  bool NodeInCluster (const std::string&, unsigned port);
 };
 
 #endif // CLUSTER_HPP
