@@ -41,12 +41,6 @@ public:
   RPCResponse (zmqpp::socket*, const rpc::RPCCall&);
   RPCResponse (const RPCResponse&);
   ~RPCResponse ();
-
-  // Register a callback for when a message is received.
-  void OnMessageReceipt (std::function<void(const json&)>);
-
-  // Register a callback for when we time out.
-  void OnTimeout (unsigned, std::function<void()>);
 };
 
 }
