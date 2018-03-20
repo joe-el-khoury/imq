@@ -57,6 +57,8 @@ public:
   
   void AddNode (const std::string&, unsigned port);
   bool NodeInCluster (const std::string&, unsigned port);
+
+  rpc::RPCClient* GetRPCClient (const std::string&, unsigned port);
 };
 
 #endif // CLUSTER_HPP

@@ -1,5 +1,7 @@
 #include "Cluster.hpp"
 
+#include <stdexcept>
+
 Cluster::Cluster ()
 {}
 
@@ -27,4 +29,20 @@ void Cluster::AddNode (const std::string& hostname, unsigned port)
     // nullptr because we will lazy-load the rpc clients if needed.
     nodes_.insert({{hostname, port}, nullptr});
   }
+}
+
+rpc::RPCClient* Cluster::GetRPCClient (const std::string& hostname, unsigned port)
+{
+  if (!NodeInCluster(hostname, port)) {
+    throw std::logic_error("Node not found.");
+  }
+
+  HostAndPort host_and_port(hostname, port);
+  rpc::RPCClient* rpc_client = nodes_[host_and_port];
+
+  if (!rpc_client) {
+    rpc_client = new rpc::RPCClient(hostname, port);
+  }
+
+  return rpc_client;
 }
