@@ -24,12 +24,6 @@ rpc::RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host)
   InitWorkerPool();
 }
 
-rpc::RPCServer::RPCServer (unsigned port) : port_(port), ctx_()
-{
-  InitSockets();
-  InitWorkerPool();
-}
-
 rpc::RPCServer::~RPCServer ()
 {
   server_thread_->join();
