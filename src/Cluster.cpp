@@ -1,5 +1,7 @@
 #include "Cluster.hpp"
 
+#include "rpc/RPCCall.hpp"
+
 #include <stdexcept>
 
 Cluster::Cluster ()
@@ -9,6 +11,13 @@ Cluster& Cluster::GetInstance ()
 {
   static Cluster instance;
   return instance;
+}
+
+void Cluster::Bootstrap (const std::string& hostname, unsigned port)
+{
+  if (!NodeInCluster(hostname, port)) {
+    AddNode(hostname, port);
+  }
 }
 
 bool Cluster::NodeInCluster (const std::string& hostname, unsigned port)
@@ -45,4 +54,17 @@ rpc::RPCClient* Cluster::GetRPCClient (const std::string& hostname, unsigned por
   }
 
   return rpc_client;
+}
+
+std::vector<std::pair<std::string, unsigned>> Cluster::GetNodesInCluster ()
+{
+  std::vector<std::pair<std::string, unsigned>> nodes;
+  for (const HostAndPort& host_and_port : host_and_ports_) {
+    const std::string& host = host_and_port.host;
+    unsigned port = host_and_port.port;
+
+    nodes.push_back({host, port});
+  }
+
+  return nodes;
 }

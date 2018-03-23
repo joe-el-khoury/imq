@@ -54,11 +54,16 @@ public:
 
   // Singleton.
   static Cluster& GetInstance ();
+
+  // Bootstrap the cluster by connecting to the node with cluster info.
+  void Bootstrap (const std::string&, unsigned);
   
   void AddNode (const std::string&, unsigned port);
   bool NodeInCluster (const std::string&, unsigned port);
 
   rpc::RPCClient* GetRPCClient (const std::string&, unsigned port);
+
+  std::vector<std::pair<std::string, unsigned>> GetNodesInCluster ();
 };
 
 #endif // CLUSTER_HPP
