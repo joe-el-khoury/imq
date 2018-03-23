@@ -41,7 +41,6 @@ private:
 
 public:
   RPCServer (const std::string&, unsigned);
-  RPCServer (unsigned);
   ~RPCServer ();
   
   const std::string& GetHost () const { return host_; }
