@@ -41,6 +41,8 @@ public:
   RPCResponse (zmqpp::socket*, const rpc::RPCCall&);
   RPCResponse (const RPCResponse&);
   ~RPCResponse ();
+
+  json Get ();
 };
 
 }

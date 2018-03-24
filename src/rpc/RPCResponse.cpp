@@ -2,11 +2,16 @@
 
 #include <chrono>
 
+#include <stdexcept>
+
 rpc::RPCResponse::RPCResponse (zmqpp::socket* socket, const rpc::RPCCall& rpc_call)
   : socket_(socket), rpc_call_(rpc_call)
 {
   received_.store(false);
-  message_thread_ = new std::thread(&rpc::RPCResponse::CheckMessageReceipt, this);
+  
+  if (rpc_call_.IsAsync()) {
+    message_thread_ = new std::thread(&rpc::RPCResponse::CheckMessageReceipt, this);
+  }
 }
 
 rpc::RPCResponse::RPCResponse (const RPCResponse& other) : rpc_call_(other.rpc_call_)
@@ -81,4 +86,19 @@ void rpc::RPCResponse::CheckMessageReceipt ()
       return;
     }
   }
+}
+
+// Synchronously get the result of the call.
+rpc::RPCResponse::json rpc::RPCResponse::Get ()
+{
+  if (!rpc_call_.IsAsync()) {
+    throw std::runtime_error("Cannot get on an async call.");
+  }
+
+  socket_->receive(received_message_);
+  
+  std::string message_str;
+  received_message_ >> message_str;
+
+  return json::parse(message_str);
 }
