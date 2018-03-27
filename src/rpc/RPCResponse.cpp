@@ -25,8 +25,10 @@ rpc::RPCResponse::RPCResponse (const RPCResponse& other) : rpc_call_(other.rpc_c
 rpc::RPCResponse::~RPCResponse ()
 {
   running_.store(false);
-  message_thread_->join();
-  delete message_thread_;
+  if (rpc_call_.IsAsync()) {
+    message_thread_->join();
+    delete message_thread_;
+  }
 }
 
 void rpc::RPCResponse::DoMessageCallback (zmqpp::message& message)
