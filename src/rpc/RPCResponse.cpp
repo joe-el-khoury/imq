@@ -91,7 +91,7 @@ void rpc::RPCResponse::CheckMessageReceipt ()
 // Synchronously get the result of the call.
 rpc::RPCResponse::json rpc::RPCResponse::Get ()
 {
-  if (!rpc_call_.IsAsync()) {
+  if (rpc_call_.IsAsync()) {
     throw std::runtime_error("Cannot get on an async call.");
   }
 
