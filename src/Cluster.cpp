@@ -35,6 +35,7 @@ void Cluster::AddNode (const std::string& hostname, unsigned port)
   if (NodeInCluster(hostname, port)) {
     nodes_[host_and_port] = nullptr;
   } else {
+    host_and_ports_.push_back(host_and_port);
     // nullptr because we will lazy-load the rpc clients if needed.
     nodes_.insert({{hostname, port}, nullptr});
   }
