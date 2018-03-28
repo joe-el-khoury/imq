@@ -32,7 +32,16 @@ IMQNode::json IMQNode::GetNodesInCluster (const json& j)
     const std::string& host = node.first;
     unsigned port = node.second;
 
-    ret[host] = port;
+    if (ret.find(host) != ret.end()) {
+      unsigned temp = ret[host];
+
+      ret[host] = std::vector<unsigned>();
+      ret[host].push_back(temp);
+      ret[host].push_back(port);
+    
+    } else {
+      ret[host] = port;
+    }
   }
 
   return ret;
