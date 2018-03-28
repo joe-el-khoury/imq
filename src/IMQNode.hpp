@@ -25,13 +25,14 @@ private:
   
   Cluster* cluster;
 
+  json RegisterNode (const json&);
   json GetNodesInCluster (const json&);
 
 public:
   IMQNode (const std::string&, unsigned, bool);
 
-  // Bootstrapping means getting the cluster up and running.
-  void BootstrapCluster (const std::string&, unsigned);
+  // Join the cluster by asking the leader for cluster info.
+  void JoinCluster (const std::string&, unsigned);
 
   void Run ();
 };
