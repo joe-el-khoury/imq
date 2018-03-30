@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "json.hpp"
+
 #include "rpc/RPCClient.hpp"
 
 struct HostAndPort
@@ -40,6 +42,8 @@ struct hash<HostAndPort>
 class Cluster
 {
 private:
+  using json = nlohmann::json;
+  
   // Store the nodes in this map.
   // Key is host and port, value is the rpc client connected to that node.
   std::unordered_map<HostAndPort, rpc::RPCClient*> nodes_;
@@ -56,12 +60,12 @@ public:
   static Cluster& GetInstance ();
 
   // Bootstrap the cluster by connecting to the node with cluster info.
-  void Bootstrap (const std::string&, unsigned);
+  void Bootstrap (const std::string&, unsigned, const std::string&, unsigned);
   
   void AddNode (const std::string&, unsigned port);
   bool NodeInCluster (const std::string&, unsigned port);
 
-  rpc::RPCClient* GetRPCClient (const std::string&, unsigned port);
+  rpc::RPCClient* GetNodeClient (const std::string&, unsigned port);
 
   std::vector<std::pair<std::string, unsigned>> GetNodesInCluster ();
 };
