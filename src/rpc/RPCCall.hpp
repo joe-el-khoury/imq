@@ -25,7 +25,7 @@ private:
   bool async_;
 
 public:
-  RPCCall (const std::string&, const json&, bool=true);
+  RPCCall (const std::string&, const json&, bool=false);
   
   void OnMessageReceipt (MessageCallback);
   void OnTimeout (unsigned, TimeoutCallback);

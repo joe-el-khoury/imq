@@ -22,11 +22,11 @@ void Cluster::Bootstrap (const std::string& requester_host, unsigned requester_p
 
   rpc::RPCClient* node = GetNodeClient(leader_host, leader_port);
   rpc::RPCCall rpc_call("GetNodesInCluster",
-      {{"host", requester_host}, {"port", requester_port}, {"register_node", true}},
-      /*async*/ false);
+      {{"host", requester_host}, {"port", requester_port}, {"register_node", true}});
   rpc::RPCResponse rpc_response = node->Call(rpc_call);
 
   json json_response = rpc_response.Get();
+  
   // I guess there isn't anything to do with the response.
   // We could assert the node has been registered, but I don't think it's
   // necessary now.
