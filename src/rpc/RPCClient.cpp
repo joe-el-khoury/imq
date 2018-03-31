@@ -19,6 +19,15 @@ rpc::RPCClient::RPCClient (const RPCServer& rpc_server)
   InitSockets(rpc_server.GetHost(), rpc_server.GetPort());
 }
 
+rpc::RPCClient::~RPCClient ()
+{
+  ctx_.terminate();
+  if (client_socket_) {
+    delete client_socket_;
+    client_socket_ = nullptr;
+  }
+}
+
 rpc::RPCResponse rpc::RPCClient::Call (const RPCCall& rpc_call)
 {
   zmqpp::message message_to_send;

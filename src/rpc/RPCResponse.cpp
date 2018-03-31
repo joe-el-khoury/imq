@@ -28,6 +28,7 @@ rpc::RPCResponse::~RPCResponse ()
   if (rpc_call_.IsAsync()) {
     message_thread_->join();
     delete message_thread_;
+    message_thread_ = nullptr;
   }
 }
 

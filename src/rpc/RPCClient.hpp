@@ -24,6 +24,7 @@ private:
 public:
   RPCClient (const std::string&, unsigned);
   RPCClient (const RPCServer&);
+  RPCClient (const RPCClient&) = delete;
   ~RPCClient ();
 
   rpc::RPCResponse Call (const RPCCall&);
