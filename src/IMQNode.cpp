@@ -64,7 +64,5 @@ void IMQNode::JoinCluster (
 
 void IMQNode::Run ()
 {
-  // rpc_server_->Add(...);
-  // rpc_server_->Run();
   rpc_server_->Run();
 }
