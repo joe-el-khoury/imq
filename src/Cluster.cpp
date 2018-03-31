@@ -20,7 +20,7 @@ void Cluster::Bootstrap (const std::string& requester_host, unsigned requester_p
     AddNode(leader_host, leader_port);
   }
 
-  rpc::RPCClient* node = GetNodeClient(leader_host, leader_port);
+  std::shared_ptr<rpc::RPCClient> node = GetNodeClient(leader_host, leader_port);
   rpc::RPCCall rpc_call("GetNodesInCluster",
       {{"host", requester_host}, {"port", requester_port}, {"register_node", true}});
   rpc::RPCResponse rpc_response = node->Call(rpc_call);
@@ -53,20 +53,19 @@ void Cluster::AddNode (const std::string& hostname, unsigned port)
   }
 }
 
-rpc::RPCClient* Cluster::GetNodeClient (const std::string& hostname, unsigned port)
+std::shared_ptr<rpc::RPCClient> Cluster::GetNodeClient (const std::string& hostname, unsigned port)
 {
   if (!NodeInCluster(hostname, port)) {
     throw std::logic_error("Node not found.");
   }
 
   HostAndPort host_and_port(hostname, port);
-  rpc::RPCClient* rpc_client = nodes_[host_and_port];
-
-  if (!rpc_client) {
-    rpc_client = new rpc::RPCClient(hostname, port);
+  if (nodes_[host_and_port] == nullptr) {
+    std::shared_ptr<rpc::RPCClient> rpc_client(new rpc::RPCClient(hostname, port));
+    nodes_[host_and_port] = rpc_client;
   }
 
-  return rpc_client;
+  return nodes_[host_and_port];
 }
 
 std::vector<std::pair<std::string, unsigned>> Cluster::GetNodesInCluster ()
