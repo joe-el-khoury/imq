@@ -26,10 +26,14 @@ void Cluster::Bootstrap (const std::string& requester_host, unsigned requester_p
   rpc::RPCResponse rpc_response = node->Call(rpc_call);
 
   json json_response = rpc_response.Get();
-  
-  // I guess there isn't anything to do with the response.
-  // We could assert the node has been registered, but I don't think it's
-  // necessary now.
+
+  // Add the cluster members.
+  for (auto it = json_response.begin(); it != json_response.end(); ++it) {
+    const std::string& hostname = it.key();
+    for (unsigned port : it.value()) {
+      AddNode(hostname, port);
+    }
+  }
 }
 
 bool Cluster::NodeInCluster (const std::string& hostname, unsigned port)
