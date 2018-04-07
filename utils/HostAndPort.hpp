@@ -1,6 +1,8 @@
 #ifndef HOSTANDPORT_HPP
 #define HOSTANDPORT_HPP
 
+#include <string>
+
 struct HostAndPort
 {
   std::string host;
