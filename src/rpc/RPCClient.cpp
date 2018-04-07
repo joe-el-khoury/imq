@@ -14,11 +14,6 @@ rpc::RPCClient::RPCClient (const std::string& host, unsigned port)
   InitSockets(host, port);
 }
 
-rpc::RPCClient::RPCClient (const RPCServer& rpc_server)
-{
-  InitSockets(rpc_server.GetHost(), rpc_server.GetPort());
-}
-
 rpc::RPCClient::~RPCClient ()
 {
   ctx_.terminate();
