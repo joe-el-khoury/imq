@@ -3,6 +3,7 @@
 
 #include "../json.hpp"
 
+#include "RPCObject.hpp"
 #include "RPCServer.hpp"
 #include "RPCResponse.hpp"
 
@@ -12,7 +13,7 @@
 
 namespace rpc {
 
-class RPCClient
+class RPCClient : public RPCObject
 {
 private:
   using json = nlohmann::json;

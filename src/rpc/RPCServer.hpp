@@ -3,6 +3,8 @@
 
 #include "../json.hpp"
 
+#include "RPCObject.hpp"
+
 #include "RPC.hpp"
 #include "RPCServerWorkerPool.hpp"
 
@@ -13,7 +15,7 @@
 
 namespace rpc {
 
-class RPCServer
+class RPCServer : public RPCObject
 {
 private:
   using json = nlohmann::json;
