@@ -18,3 +18,13 @@ std::shared_ptr<rpc::RPCObject> rpc::RPCStore::GetRPCObject (const HostAndPort& 
     return nullptr;
   }
 }
+
+void rpc::RPCStore::AddRPCObject (const std::shared_ptr<rpc::RPCObject>& rpc_object)
+{
+  if (!rpc_object) {
+    return;
+  }
+
+  // I'll assume the client calling this has checked if the RPC object exists.
+  rpc_objects_.insert({rpc_object->GetHostAndPort(), rpc_object});
+}
