@@ -20,6 +20,8 @@ void rpc::RPCServer::InitWorkerPool ()
 
 rpc::RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
 {
+  SetHostAndPort(host, port);
+  
   InitSockets();
   InitWorkerPool();
 }

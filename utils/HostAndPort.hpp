@@ -8,6 +8,9 @@ struct HostAndPort
   std::string host;
   unsigned port;
 
+  HostAndPort ()
+  {}
+  
   HostAndPort (const std::string& host_, unsigned port_)
   {
     host = host_;

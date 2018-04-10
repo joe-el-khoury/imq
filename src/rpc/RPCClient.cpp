@@ -11,6 +11,8 @@ void rpc::RPCClient::InitSockets (const std::string& host, unsigned port)
 
 rpc::RPCClient::RPCClient (const std::string& host, unsigned port)
 {
+  SetHostAndPort(host, port);
+  
   InitSockets(host, port);
 }
 
