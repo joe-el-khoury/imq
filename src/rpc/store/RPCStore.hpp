@@ -26,6 +26,16 @@ private:
 
   bool HasRPCObject (const HostAndPort&);
   std::shared_ptr<rpc::RPCObject> GetRPCObject(const HostAndPort&);
+
+  // Singleton
+  RPCStore ()
+  {}
+  
+  static RPCStore& GetInstance ()
+  {
+    static RPCStore rpc_store;
+    return rpc_store;
+  }
 };
 
 } // namespace rpc
