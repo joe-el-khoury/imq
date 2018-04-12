@@ -3,6 +3,9 @@
 
 #include "../RPCObject.hpp"
 
+#include "RPCClientStore.hpp"
+#include "RPCServerStore.hpp"
+
 #include "../../../utils/HostAndPort.hpp"
 
 #include <unordered_map>
@@ -14,6 +17,9 @@ namespace rpc {
 class RPCStore
 {
 private:
+  friend class RPCClientStore;
+  friend class RPCServerStore;
+
   std::unordered_map<HostAndPort, std::shared_ptr<rpc::RPCObject>> rpc_objects_;
 
   void AddRPCObject (const std::shared_ptr<rpc::RPCObject>&);
