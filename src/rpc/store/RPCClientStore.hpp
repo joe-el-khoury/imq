@@ -2,14 +2,19 @@
 #define RPCCLIENTSTORE_HPP
 
 #include "RPCStore.hpp"
-#include "../RPCObject.hpp"
 
 #include "../RPCClient.hpp"
+
+#include <memory>
 
 namespace rpc {
 
 class RPCClientStore
 {
+private:
+  RPCStore* rpc_store_ = &RPCStore::GetInstance();
+
+  std::shared_ptr<rpc::RPCClient> NewRPCClient (const std::string&, unsigned);
 };
 
 } // namespace rpc
