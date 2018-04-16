@@ -5,7 +5,7 @@
 
 #include "../../../utils/HostAndPort.hpp"
 
-std::shared_ptr<rpc::RPCClient> rpc::RPCClientStore::NewRPCClient (const std::string& host, unsigned port)
+std::shared_ptr<rpc::RPCClient> rpc::RPCClientStore::GetRPCClient (const std::string& host, unsigned port)
 {
   HostAndPort host_and_port(host, port);
   if (rpc_store_->HasRPCObject(host_and_port)) {

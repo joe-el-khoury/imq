@@ -14,7 +14,7 @@ class RPCClientStore
 private:
   RPCStore* rpc_store_ = &RPCStore::GetInstance();
 
-  std::shared_ptr<rpc::RPCClient> NewRPCClient (const std::string&, unsigned);
+  std::shared_ptr<rpc::RPCClient> GetRPCClient (const std::string&, unsigned);
 };
 
 } // namespace rpc

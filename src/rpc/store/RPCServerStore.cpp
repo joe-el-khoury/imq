@@ -5,7 +5,7 @@
 
 #include "../../../utils/HostAndPort.hpp"
 
-std::shared_ptr<rpc::RPCServer> rpc::RPCServerStore::NewRPCServer (const std::string& host, unsigned port)
+std::shared_ptr<rpc::RPCServer> rpc::RPCServerStore::GetRPCServer (const std::string& host, unsigned port)
 {
   HostAndPort host_and_port(host, port);
   if (rpc_store_->HasRPCObject(host_and_port)) {
