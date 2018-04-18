@@ -1,9 +1,9 @@
 #ifndef RPCSTORE_HPP
 #define RPCSTORE_HPP
 
-#include "../RPCObject.hpp"
+#include "rpc/RPCObject.hpp"
 
-#include "../../../utils/HostAndPort.hpp"
+#include "utils/HostAndPort.hpp"
 
 #include <unordered_map>
 

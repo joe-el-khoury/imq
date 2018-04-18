@@ -1,9 +1,9 @@
-#include "RPCClientStore.hpp"
+#include "rpc/store/RPCClientStore.hpp"
 
-#include "../RPCObject.hpp"
-#include "../RPCClient.hpp"
+#include "rpc/RPCObject.hpp"
+#include "rpc/RPCClient.hpp"
 
-#include "../../../utils/HostAndPort.hpp"
+#include "utils/HostAndPort.hpp"
 
 std::shared_ptr<rpc::RPCClient> rpc::RPCClientStore::GetRPCClient (const std::string& host, unsigned port)
 {

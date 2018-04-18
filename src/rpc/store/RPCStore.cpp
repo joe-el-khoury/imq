@@ -1,8 +1,8 @@
-#include "RPCStore.hpp"
+#include "rpc/store/RPCStore.hpp"
 
-#include "../RPCObject.hpp"
+#include "rpc/RPCObject.hpp"
 
-#include "../../../utils/HostAndPort.hpp"
+#include "utils/HostAndPort.hpp"
 
 bool rpc::RPCStore::HasRPCObject (const HostAndPort& host_and_port)
 {

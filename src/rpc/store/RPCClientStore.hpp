@@ -1,9 +1,9 @@
 #ifndef RPCCLIENTSTORE_HPP
 #define RPCCLIENTSTORE_HPP
 
-#include "RPCStore.hpp"
+#include "rpc/store/RPCStore.hpp"
 
-#include "../RPCClient.hpp"
+#include "rpc/RPCClient.hpp"
 
 #include <memory>
 

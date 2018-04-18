@@ -1,9 +1,9 @@
-#include "RPCServerStore.hpp"
+#include "rpc/store/RPCServerStore.hpp"
 
-#include "../RPCObject.hpp"
-#include "../RPCServer.hpp"
+#include "rpc/RPCObject.hpp"
+#include "rpc/RPCServer.hpp"
 
-#include "../../../utils/HostAndPort.hpp"
+#include "utils/HostAndPort.hpp"
 
 std::shared_ptr<rpc::RPCServer> rpc::RPCServerStore::GetRPCServer (const std::string& host, unsigned port)
 {

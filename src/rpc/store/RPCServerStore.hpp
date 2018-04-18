@@ -1,9 +1,9 @@
 #ifndef RPCSERVERSTORE_HPP
 #define RPCSERVERSTORE_HPP
 
-#include "RPCStore.hpp"
+#include "rpc/store/RPCStore.hpp"
 
-#include "../RPCServer.hpp"
+#include "rpc/RPCServer.hpp"
 
 #include <memory>
 
