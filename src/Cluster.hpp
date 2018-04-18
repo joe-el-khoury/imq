@@ -1,16 +1,16 @@
 #ifndef CLUSTER_HPP
 #define CLUSTER_HPP
 
-#include <unordered_map>
-#include <vector>
-
-#include <memory>
-
 #include "json.hpp"
 
 #include "rpc/RPCClient.hpp"
 
-#include "../utils/HostAndPort.hpp"
+#include "utils/HostAndPort.hpp"
+
+#include <unordered_map>
+#include <vector>
+
+#include <memory>
 
 class Cluster
 {

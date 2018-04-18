@@ -3,7 +3,7 @@
 #include "rpc/RPCCall.hpp"
 #include "rpc/RPCResponse.hpp"
 
-#include "../utils/HostAndPort.hpp"
+#include "utils/HostAndPort.hpp"
 
 #include <stdexcept>
 
