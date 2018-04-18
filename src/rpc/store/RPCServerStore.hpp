@@ -14,6 +14,7 @@ class RPCServerStore
 private:
   RPCStore* rpc_store_ = &RPCStore::GetInstance();
 
+public:
   std::shared_ptr<rpc::RPCServer> GetRPCServer (const std::string&, unsigned);
 };
 
