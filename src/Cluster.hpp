@@ -9,7 +9,7 @@
 #include "utils/HostAndPort.hpp"
 
 #include <unordered_map>
-#include <vector>
+#include <list>
 
 #include <memory>
 
@@ -20,11 +20,8 @@ private:
 
   rpc::RPCClientStore rpc_client_store_;
   
-  // Store the nodes in this map.
-  // Key is host and port, value is the rpc client connected to that node.
-  std::unordered_map<HostAndPort, std::shared_ptr<rpc::RPCClient>> nodes_;
-  // To quickly get the nodes in the cluster.
-  std::vector<HostAndPort> host_and_ports_;
+  // A linked list so we can add/remove.
+  std::list<HostAndPort> nodes_;
 
   Cluster ();
 
@@ -43,7 +40,7 @@ public:
 
   std::shared_ptr<rpc::RPCClient> GetNodeClient (const std::string&, unsigned port);
 
-  std::vector<std::pair<std::string, unsigned>> GetNodesInCluster ();
+  std::vector<HostAndPort> GetNodesInCluster ();
 };
 
 #endif // CLUSTER_HPP

@@ -41,19 +41,14 @@ void Cluster::Bootstrap (const std::string& requester_host, unsigned requester_p
 bool Cluster::NodeInCluster (const std::string& hostname, unsigned port)
 {
   HostAndPort host_and_port(hostname, port);
-  bool in_vector = (std::find(host_and_ports_.begin(), host_and_ports_.end(), host_and_port) != host_and_ports_.end());
-  bool in_map = nodes_.find(host_and_port) != nodes_.end();
-  
-  return in_vector && in_map;
+  return std::find(nodes_.begin(), nodes_.end(), host_and_port) != nodes_.end();
 }
 
 void Cluster::AddNode (const std::string& hostname, unsigned port)
 {
   HostAndPort host_and_port(hostname, port);
   if (!NodeInCluster(hostname, port)) {
-    host_and_ports_.push_back(host_and_port);
-    // nullptr because we will lazy-load the rpc clients if needed.
-    nodes_.insert({{hostname, port}, nullptr});
+    nodes_.push_back(host_and_port);
   }
 }
 
@@ -66,12 +61,12 @@ std::shared_ptr<rpc::RPCClient> Cluster::GetNodeClient (const std::string& hostn
   return rpc_client_store_.GetRPCClient(hostname, port);
 }
 
-std::vector<std::pair<std::string, unsigned>> Cluster::GetNodesInCluster ()
+std::vector<HostAndPort> Cluster::GetNodesInCluster ()
 {
-  std::vector<std::pair<std::string, unsigned>> nodes;
-  for (const HostAndPort& host_and_port : host_and_ports_) {
-    const std::string& host = host_and_port.host;
-    unsigned port = host_and_port.port;
+  std::vector<HostAndPort> nodes;
+  for (const HostAndPort& node : nodes_) {
+    const std::string& host = node.host;
+    unsigned port = node.port;
 
     nodes.push_back({host, port});
   }
