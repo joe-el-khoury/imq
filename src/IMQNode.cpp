@@ -4,7 +4,9 @@
 
 #include "IMQNode.hpp"
 
-#include "../utils/Common.hpp"
+#include "utils/Common.hpp"
+#include "utils/HostAndPort.hpp"
+
 #include "Cluster.hpp"
 
 #include "rpc/RPCCall.hpp"
@@ -25,12 +27,12 @@ IMQNode::json IMQNode::GetNodesInCluster (const json& j)
     }
   }
   
-  std::vector<std::pair<std::string, unsigned>> nodes = cluster->GetNodesInCluster();
+  std::vector<HostAndPort> nodes = cluster->GetNodesInCluster();
   
   json ret;
   for (const auto& node : nodes) {
-    const std::string& host = node.first;
-    unsigned port = node.second;
+    const std::string& host = node.host;
+    unsigned port = node.port;
 
     if (ret.find(host) != ret.end()) {
       ret[host].push_back(port);
