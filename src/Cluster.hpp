@@ -4,6 +4,7 @@
 #include "json.hpp"
 
 #include "rpc/RPCClient.hpp"
+#include "rpc/store/RPCClientStore.hpp"
 
 #include "utils/HostAndPort.hpp"
 
@@ -16,6 +17,8 @@ class Cluster
 {
 private:
   using json = nlohmann::json;
+
+  rpc::RPCClientStore rpc_client_store_;
   
   // Store the nodes in this map.
   // Key is host and port, value is the rpc client connected to that node.

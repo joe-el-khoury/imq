@@ -63,13 +63,7 @@ std::shared_ptr<rpc::RPCClient> Cluster::GetNodeClient (const std::string& hostn
     throw std::logic_error("Node not found.");
   }
 
-  HostAndPort host_and_port(hostname, port);
-  if (nodes_[host_and_port] == nullptr) {
-    std::shared_ptr<rpc::RPCClient> rpc_client(new rpc::RPCClient(hostname, port));
-    nodes_[host_and_port] = rpc_client;
-  }
-
-  return nodes_[host_and_port];
+  return rpc_client_store_.GetRPCClient(hostname, port);
 }
 
 std::vector<std::pair<std::string, unsigned>> Cluster::GetNodesInCluster ()
