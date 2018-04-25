@@ -7,6 +7,8 @@
 #include "utils/Common.hpp"
 #include "utils/HostAndPort.hpp"
 
+#include "meta/MetaStore.hpp"
+
 #include "Cluster.hpp"
 
 #include "rpc/RPCCall.hpp"
@@ -60,9 +62,9 @@ IMQNode::~IMQNode ()
 }
 
 void IMQNode::JoinCluster (
-    const std::string& cluster_node_hostname, unsigned cluster_node_port)
+    const std::string& leader_hostname, unsigned leader_port)
 {
-  cluster->Bootstrap(rpc_server_->GetHost(), rpc_server_->GetPort(), cluster_node_hostname, cluster_node_port);
+  cluster->Bootstrap(MetaStore::GetHost(), MetaStore::GetPort(), leader_hostname, leader_port);
 }
 
 void IMQNode::Run ()
