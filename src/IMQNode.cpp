@@ -54,6 +54,11 @@ IMQNode::IMQNode (const std::string& host, unsigned server_port)
   rpc_server_->AddRPC("GetNodesInCluster", std::bind(&IMQNode::GetNodesInCluster, this, std::placeholders::_1));
 }
 
+IMQNode::~IMQNode ()
+{
+  rpc_server_->Stop();
+}
+
 void IMQNode::JoinCluster (
     const std::string& cluster_node_hostname, unsigned cluster_node_port)
 {

@@ -51,6 +51,7 @@ public:
   void AddRPC (const std::string&, const RPCFunc&);
 
   void Run ();
+  void Stop ();
 };
 
 } // namespace rpc

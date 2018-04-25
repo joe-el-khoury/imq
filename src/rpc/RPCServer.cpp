@@ -59,3 +59,9 @@ void rpc::RPCServer::Run ()
 {
   server_thread_ = new std::thread(&rpc::RPCServer::RunServer, this);
 }
+
+void rpc::RPCServer::Stop ()
+{
+  running_.store(false);
+  server_thread_->join();
+}

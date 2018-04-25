@@ -30,6 +30,7 @@ private:
 
 public:
   IMQNode (const std::string&, unsigned);
+  ~IMQNode ();
 
   // Join the cluster by asking the leader for cluster info.
   void JoinCluster (const std::string&, unsigned);
