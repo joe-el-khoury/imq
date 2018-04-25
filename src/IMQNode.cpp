@@ -45,7 +45,7 @@ IMQNode::json IMQNode::GetNodesInCluster (const json& j)
   return ret;
 }
 
-IMQNode::IMQNode (const std::string& host, unsigned server_port, bool first_node_in_cluster)
+IMQNode::IMQNode (const std::string& host, unsigned server_port)
 {
   rpc_server_ = std::make_shared<rpc::RPCServer>(host, server_port);
 
