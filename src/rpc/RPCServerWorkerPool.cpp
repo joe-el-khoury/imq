@@ -18,11 +18,13 @@ void rpc::RPCServerWorkerPool::Start ()
 
 void rpc::RPCServerWorkerPool::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
 {
+  std::lock_guard<std::mutex> lk(rpcs_mutex_);
   rpcs_.insert({rpc_name, rpc_func});
 }
 
 rpc::RPCServerWorkerPool::RPCFunc& rpc::RPCServerWorkerPool::GetRPC (const std::string& rpc)
 {
+  std::lock_guard<std::mutex> lk(rpcs_mutex_);
   auto got = rpcs_.find(rpc);
   if (got == rpcs_.end()) {
     throw std::invalid_argument("RPC " + rpc + " not found.");

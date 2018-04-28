@@ -18,6 +18,7 @@ private:
   using RPCFunc = std::function<json(const json)>;
   using RPCResult = json;
 
+  std::mutex rpcs_mutex_;
   std::unordered_map<std::string, RPCFunc> rpcs_;
 
   std::string ipc_name_;
