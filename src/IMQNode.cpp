@@ -1,5 +1,3 @@
-#include <zmqpp/zmqpp.hpp>
-
 #include <stdexcept>
 
 #include "IMQNode.hpp"

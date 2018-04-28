@@ -1,8 +1,6 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
-#include <zmqpp/zmqpp.hpp>
-
 #include <thread>
 #include <atomic>
 #include <string>
