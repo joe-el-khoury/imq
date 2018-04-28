@@ -12,6 +12,7 @@
 #include "json.hpp"
 
 #include "rpc/RPCServer.hpp"
+#include "rpc/store/RPCServerStore.hpp"
 #include "rpc/RPCClient.hpp"
 
 #include "Cluster.hpp"
@@ -21,9 +22,10 @@ class IMQNode
 private:
   using json = nlohmann::json;
   
-  std::shared_ptr<rpc::RPCServer> rpc_server_;
-  
   Cluster* cluster;
+  
+  rpc::RPCServerStore rpc_server_store_;
+  std::shared_ptr<rpc::RPCServer> rpc_server_;
 
   json RegisterNode (const json&);
   json GetNodesInCluster (const json&);

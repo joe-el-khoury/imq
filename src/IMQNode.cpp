@@ -47,12 +47,12 @@ IMQNode::json IMQNode::GetNodesInCluster (const json& j)
   return ret;
 }
 
-IMQNode::IMQNode (const std::string& host, unsigned server_port)
+IMQNode::IMQNode (const std::string& host, unsigned port)
 {
-  rpc_server_ = std::make_shared<rpc::RPCServer>(host, server_port);
+  rpc_server_ = rpc_server_store_.GetRPCServer(host, port);
 
   cluster = &Cluster::GetInstance();
-  cluster->AddNode(host, server_port);
+  cluster->AddNode(host, port);
   rpc_server_->AddRPC("GetNodesInCluster", std::bind(&IMQNode::GetNodesInCluster, this, std::placeholders::_1));
 }
 
