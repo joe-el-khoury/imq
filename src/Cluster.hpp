@@ -20,8 +20,7 @@ private:
 
   rpc::RPCClientStore rpc_client_store_;
   
-  // A linked list so we can add/remove.
-  std::list<HostAndPort> nodes_;
+  std::vector<HostAndPort> nodes_;
 
   Cluster ();
 
@@ -40,7 +39,7 @@ public:
 
   std::shared_ptr<rpc::RPCClient> GetNodeClient (const std::string&, unsigned port);
 
-  std::vector<HostAndPort> GetNodesInCluster ();
+  const std::vector<HostAndPort>& GetNodesInCluster ();
 };
 
 #endif // CLUSTER_HPP

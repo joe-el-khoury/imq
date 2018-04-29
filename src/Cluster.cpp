@@ -61,15 +61,7 @@ std::shared_ptr<rpc::RPCClient> Cluster::GetNodeClient (const std::string& hostn
   return rpc_client_store_.GetRPCClient(hostname, port);
 }
 
-std::vector<HostAndPort> Cluster::GetNodesInCluster ()
+const std::vector<HostAndPort>& Cluster::GetNodesInCluster ()
 {
-  std::vector<HostAndPort> nodes;
-  for (const HostAndPort& node : nodes_) {
-    const std::string& host = node.host;
-    unsigned port = node.port;
-
-    nodes.push_back({host, port});
-  }
-
-  return nodes;
+  return nodes_;
 }
