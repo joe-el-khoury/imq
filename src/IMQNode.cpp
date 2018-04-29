@@ -9,6 +9,8 @@
 
 #include "Cluster.hpp"
 
+#include "rpc/RPCCall.hpp"
+
 IMQNode::json IMQNode::GetNodesInCluster (const json& j)
 {
   // Whether to register the calling node in the cluster.
@@ -65,5 +67,6 @@ void IMQNode::JoinCluster (
 
 void IMQNode::Run ()
 {
+  health_checker_.Run();
   rpc_server_->Run();
 }

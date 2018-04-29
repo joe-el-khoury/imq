@@ -11,7 +11,8 @@
 
 #include "rpc/RPCServer.hpp"
 #include "rpc/store/RPCServerStore.hpp"
-#include "rpc/RPCClient.hpp"
+
+#include "health/Health.hpp"
 
 #include "Cluster.hpp"
 
@@ -19,6 +20,8 @@ class IMQNode
 {
 private:
   using json = nlohmann::json;
+
+  Health health_checker_;
   
   Cluster* cluster;
   
