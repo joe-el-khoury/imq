@@ -10,7 +10,7 @@
 
 Health::json Health::CheckHealth (const json& j)
 {
-  return {"health", 1};
+  return {{"health", 1}};
 }
 
 void Health::Run ()
