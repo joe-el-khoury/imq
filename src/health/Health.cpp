@@ -19,5 +19,6 @@ void Health::Run ()
   std::string host = MetaStore::GetHost();
   unsigned port = MetaStore::GetPort();
 
-  (rpc_server_store_.GetRPCServer(host, port))->AddRPC("CheckHealth", std::bind(&Health::CheckHealth, this, std::placeholders::_1));
+  (rpc_server_store_.GetRPCServer(host, port))->AddRPC(
+      "CheckHealth", std::bind(&Health::CheckHealth, this, std::placeholders::_1));
 }
