@@ -16,7 +16,7 @@ private:
 
   rpc::RPCServerStore rpc_server_store_;
 
-  json CheckHealth (const json&);
+  json CheckHealthRPC (const json&);
 
 public:
   void Run ();

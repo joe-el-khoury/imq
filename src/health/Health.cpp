@@ -8,7 +8,7 @@
 
 #include <memory>
 
-Health::json Health::CheckHealth (const json& j)
+Health::json Health::CheckHealthRPC (const json& j)
 {
   return {{"health", 1}};
 }
@@ -20,5 +20,5 @@ void Health::Run ()
   unsigned port = MetaStore::GetPort();
 
   (rpc_server_store_.GetRPCServer(host, port))->AddRPC(
-      "CheckHealth", std::bind(&Health::CheckHealth, this, std::placeholders::_1));
+      "CheckHealth", std::bind(&Health::CheckHealthRPC, this, std::placeholders::_1));
 }
