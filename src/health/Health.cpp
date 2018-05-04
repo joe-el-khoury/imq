@@ -7,6 +7,15 @@
 #include "json.hpp"
 
 #include <memory>
+#include <chrono>
+#include <thread>
+
+unsigned Health::GetCurrentTime ()
+{
+  return std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::system_clock::now().time_since_epoch()
+  ).count();
+}
 
 Health::json Health::CheckHealthRPC (const json& j)
 {

@@ -7,14 +7,17 @@
 
 #include "json.hpp"
 
+#include <chrono>
+
 class Health
 {
 private:
   using json = nlohmann::json;
 
   Cluster* cluster = &Cluster::GetInstance();
-
   rpc::RPCServerStore rpc_server_store_;
+
+  unsigned GetCurrentTime ();
 
   json CheckHealthRPC (const json&);
 
