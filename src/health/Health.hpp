@@ -7,7 +7,7 @@
 
 #include "json.hpp"
 
-#include <chrono>
+#include <thread>
 
 class Health
 {
@@ -18,6 +18,11 @@ private:
   rpc::RPCServerStore rpc_server_store_;
 
   unsigned GetCurrentTime ();
+
+  void PerformHealthChecks ();
+  void StartHealthCheckThread ();
+
+  std::thread* health_check_thread_;
 
   json CheckHealthRPC (const json&);
 

@@ -17,6 +17,15 @@ unsigned Health::GetCurrentTime ()
   ).count();
 }
 
+void Health::PerformHealthChecks ()
+{
+}
+
+void Health::StartHealthCheckThread ()
+{
+  health_check_thread_ = new std::thread(std::bind(&Health::PerformHealthChecks, this));
+}
+
 Health::json Health::CheckHealthRPC (const json& j)
 {
   return {{"health", 1}};
@@ -25,9 +34,12 @@ Health::json Health::CheckHealthRPC (const json& j)
 void Health::Run ()
 {
   // Add the health RPC to the server.
+  
   std::string host = MetaStore::GetHost();
   unsigned port = MetaStore::GetPort();
 
   (rpc_server_store_.GetRPCServer(host, port))->AddRPC(
       "CheckHealth", std::bind(&Health::CheckHealthRPC, this, std::placeholders::_1));
+
+  StartHealthCheckThread();
 }
