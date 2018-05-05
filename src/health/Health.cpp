@@ -19,6 +19,10 @@ unsigned Health::GetCurrentTime ()
 
 void Health::PerformHealthChecks ()
 {
+  running_.store(true);
+  while (running_.load()) {
+    // do stuff
+  }
 }
 
 void Health::StartHealthCheckThread ()
