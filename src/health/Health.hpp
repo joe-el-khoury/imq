@@ -30,6 +30,7 @@ private:
 
 public:
   void Run ();
+  void Stop ();
 };
 
 #endif // HEALTH_HPP

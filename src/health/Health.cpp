@@ -47,3 +47,11 @@ void Health::Run ()
 
   StartHealthCheckThread();
 }
+
+void Health::Stop ()
+{
+  running_.store(false);
+  if (health_check_thread_) {
+    health_check_thread_->join();
+  }
+}
