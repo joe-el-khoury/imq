@@ -28,9 +28,6 @@ rpc::RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host)
 
 rpc::RPCServer::~RPCServer ()
 {
-  if (server_thread_) {
-    server_thread_->join();
-  }
   if (frontend_) {
     delete frontend_;
   }
@@ -67,5 +64,7 @@ void rpc::RPCServer::Run ()
 void rpc::RPCServer::Stop ()
 {
   running_.store(false);
-  server_thread_->join();
+  if (server_thread_) {
+    server_thread_->join();
+  }
 }
