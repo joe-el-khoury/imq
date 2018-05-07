@@ -92,11 +92,22 @@ rpc::RPCResponse::json rpc::RPCResponse::Get ()
   if (rpc_call_.IsAsync()) {
     throw std::runtime_error("Cannot get on an async call.");
   }
-
-  socket_->receive(received_message_);
   
-  std::string message_str;
-  received_message_ >> message_str;
+  running_.store(true);
+  start_time_ = CurrentTime();
+  
+  while (running_.load()) {
+    bool received = socket_->receive(received_message_, true);
+    received_.store(received);
 
-  return json::parse(message_str);
+    if (received_.load()) {
+      std::string message_str;
+      received_message_ >> message_str;
+      
+      return json::parse(message_str);
+    }
+    if (HasTimedOut()) {
+      return {{"error", 1}};
+    }
+  }
 }

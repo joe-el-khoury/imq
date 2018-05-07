@@ -1,14 +1,14 @@
 #ifndef RPCRESPONSE_HPP
 #define RPCRESPONSE_HPP
 
+#include "RPCCall.hpp"
+
+#include "../json.hpp"
+
 #include <zmqpp/zmqpp.hpp>
 
 #include <thread>
 #include <atomic>
-
-#include "RPCCall.hpp"
-
-#include "../json.hpp"
 
 namespace rpc {
 
