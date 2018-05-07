@@ -2,6 +2,7 @@
 #define RPCCALL_HPP
 
 #include "../json.hpp"
+#include "utils/HostAndPort.hpp"
 
 namespace rpc {
 
@@ -24,6 +25,9 @@ private:
   json args_;
   bool async_;
 
+  // Data about the node we're calling.
+  HostAndPort callee_info_;
+
 public:
   RPCCall (const std::string&, const json&, bool=false);
   
@@ -41,6 +45,9 @@ public:
   const std::string& GetRPCName () const { return rpc_; }
   const json& GetArgs () const { return args_; }
   bool IsAsync () const { return async_; }
+
+  std::string GetCalleeHost () { return callee_info_.host; }
+  unsigned GetCalleePort () { return callee_info_.port; }
 };
 
 } // namespace rpc
