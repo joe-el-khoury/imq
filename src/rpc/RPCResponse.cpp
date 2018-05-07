@@ -61,11 +61,6 @@ unsigned rpc::RPCResponse::CurrentTime ()
 
 bool rpc::RPCResponse::HasTimedOut ()
 {
-  if (!rpc_call_.TimeoutIsSet()) {
-    // Can't timeout if no timeout is set!
-    return false;
-  }
-  
   unsigned now = CurrentTime();
   return (now - start_time_) >= rpc_call_.GetTimeoutDuration();
 }

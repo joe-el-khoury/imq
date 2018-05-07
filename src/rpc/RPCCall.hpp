@@ -16,7 +16,7 @@ private:
   bool message_callback_set_ = false;
   MessageCallback message_receipt_callback_;
   
-  unsigned timeout_duration_ = 0;
+  unsigned timeout_duration_ = 3000 /* default */;
   bool timeout_callback_set_ = false;
   TimeoutCallback timeout_callback_;
 
