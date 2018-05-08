@@ -8,16 +8,18 @@ rpc::RPCResponse::RPCResponse (zmqpp::socket* socket, const rpc::RPCCall& rpc_ca
   : socket_(socket), rpc_call_(rpc_call)
 {
   received_.store(false);
+  timedout_.store(false);
   
   if (rpc_call_.IsAsync()) {
     message_thread_ = new std::thread(
-        &rpc::RPCResponse::MessageReceiptMainWorkLoop, this);
+        &rpc::RPCResponse::MessageReceiptMainWorkLoop, this, true);
   }
 }
 
 rpc::RPCResponse::RPCResponse (const RPCResponse& other) : rpc_call_(other.rpc_call_)
 {
   received_.store(other.received_.load());
+  timedout_.store(other.timedout_.load());
 
   socket_ = other.socket_;
   message_thread_ = other.message_thread_;
@@ -66,22 +68,28 @@ bool rpc::RPCResponse::HasTimedOut ()
   return (now - start_time_) >= rpc_call_.GetTimeoutDuration();
 }
 
-void rpc::RPCResponse::MessageReceiptMainWorkLoop ()
+void rpc::RPCResponse::MessageReceiptMainWorkLoop (bool do_cb=true)
 {
   running_.store(true);
   start_time_ = CurrentTime();
   
-  zmqpp::message received_message;
   while (running_.load()) {
-    bool received = socket_->receive(received_message, true);
+    bool received = socket_->receive(received_message_, true);
     received_.store(received);
 
     if (received_.load()) {
-      DoMessageCallback(received_message);
+      if (do_cb) {
+        DoMessageCallback(received_message_);
+      }
+      
       return;
     }
     if (HasTimedOut()) {
-      DoTimeoutCallback();
+      timedout_.store(true);
+      if (do_cb) {
+        DoTimeoutCallback();
+      }
+      
       return;
     }
   }
@@ -93,22 +101,22 @@ rpc::RPCResponse::json rpc::RPCResponse::Get ()
   if (rpc_call_.IsAsync()) {
     throw std::runtime_error("Cannot get on an async call.");
   }
-  
-  running_.store(true);
-  start_time_ = CurrentTime();
-  
-  while (running_.load()) {
-    bool received = socket_->receive(received_message_, true);
-    received_.store(received);
 
-    if (received_.load()) {
-      std::string message_str;
-      received_message_ >> message_str;
-      
-      return json::parse(message_str);
-    }
-    if (HasTimedOut()) {
-      return {{"error", 1}};
-    }
+  MessageReceiptMainWorkLoop(false);
+  
+  // Once the main loop exits, we check whether we timed out or have a message.
+  
+  if (received_.load()) {
+    std::string message_str;
+    received_message_ >> message_str;
+
+    return json::parse(message_str);
+  
+  } else if (timedout_.load()) {
+    return {{"error", 1}};
+  
+  } else {
+    // Will never get here, but just in case.
+    return {{"error", 1}};
   }
 }

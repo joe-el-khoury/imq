@@ -20,6 +20,8 @@ private:
   std::atomic<bool> received_;
   zmqpp::message received_message_;
 
+  std::atomic<bool> timedout_;
+
   zmqpp::socket* socket_;
   std::thread* message_thread_;
 
@@ -33,9 +35,8 @@ private:
   void DoMessageCallback (zmqpp::message&);
   void DoTimeoutCallback ();
 
-  void MessageReceiptMainWorkLoop ();
-
   std::atomic<bool> running_;
+  void MessageReceiptMainWorkLoop (bool);
 
 public:
   RPCResponse (zmqpp::socket*, const rpc::RPCCall&);
