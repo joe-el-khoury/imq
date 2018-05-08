@@ -10,7 +10,8 @@ rpc::RPCResponse::RPCResponse (zmqpp::socket* socket, const rpc::RPCCall& rpc_ca
   received_.store(false);
   
   if (rpc_call_.IsAsync()) {
-    message_thread_ = new std::thread(&rpc::RPCResponse::CheckMessageReceipt, this);
+    message_thread_ = new std::thread(
+        &rpc::RPCResponse::MessageReceiptMainWorkLoop, this);
   }
 }
 
@@ -65,7 +66,7 @@ bool rpc::RPCResponse::HasTimedOut ()
   return (now - start_time_) >= rpc_call_.GetTimeoutDuration();
 }
 
-void rpc::RPCResponse::CheckMessageReceipt ()
+void rpc::RPCResponse::MessageReceiptMainWorkLoop ()
 {
   running_.store(true);
   start_time_ = CurrentTime();

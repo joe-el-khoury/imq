@@ -33,7 +33,7 @@ private:
   void DoMessageCallback (zmqpp::message&);
   void DoTimeoutCallback ();
 
-  void CheckMessageReceipt ();
+  void MessageReceiptMainWorkLoop ();
 
   std::atomic<bool> running_;
 
