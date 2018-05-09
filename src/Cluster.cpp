@@ -29,8 +29,9 @@ void Cluster::Bootstrap (const std::string& requester_host, unsigned requester_p
 
   json json_response = rpc_response.Get();
 
+  auto nodes = json_response["nodes"];
   // Add the cluster members.
-  for (auto it = json_response.begin(); it != json_response.end(); ++it) {
+  for (auto it = nodes.begin(); it != nodes.end(); ++it) {
     const std::string& hostname = it.key();
     for (unsigned port : it.value()) {
       AddNode(hostname, port);
