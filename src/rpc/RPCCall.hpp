@@ -46,6 +46,8 @@ public:
   const json& GetArgs () const { return args_; }
   bool IsAsync () const { return async_; }
 
+  void SetCalleeHost (const std::string& host) { callee_info_.host = host; }
+  void SetCalleePort (unsigned port) { callee_info_.port = port; }
   std::string GetCalleeHost () const { return callee_info_.host; }
   unsigned GetCalleePort () const { return callee_info_.port; }
 };
