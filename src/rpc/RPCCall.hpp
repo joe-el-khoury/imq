@@ -46,8 +46,8 @@ public:
   const json& GetArgs () const { return args_; }
   bool IsAsync () const { return async_; }
 
-  std::string GetCalleeHost () { return callee_info_.host; }
-  unsigned GetCalleePort () { return callee_info_.port; }
+  std::string GetCalleeHost () const { return callee_info_.host; }
+  unsigned GetCalleePort () const { return callee_info_.port; }
 };
 
 } // namespace rpc
