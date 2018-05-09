@@ -35,6 +35,12 @@ rpc::RPCResponse::~RPCResponse ()
   }
 }
 
+void rpc::RPCResponse::AddResponseMetadata (json& j)
+{
+  j["callee_info"]["host"] = rpc_call_.GetCalleeHost();
+  j["callee_info"]["port"] = rpc_call_.GetCalleePort();
+}
+
 void rpc::RPCResponse::DoMessageCallback (zmqpp::message& message)
 {
   if (!rpc_call_.MessageCallbackIsSet()) {
@@ -45,7 +51,10 @@ void rpc::RPCResponse::DoMessageCallback (zmqpp::message& message)
   std::string message_str;
   message >> message_str;
 
-  rpc_call_.GetMessageCallback()(json::parse(message_str));
+  json parsed = json::parse(message_str);
+  AddResponseMetadata(parsed);
+  
+  rpc_call_.GetMessageCallback()(parsed);
 }
 
 void rpc::RPCResponse::DoTimeoutCallback ()
@@ -110,7 +119,10 @@ rpc::RPCResponse::json rpc::RPCResponse::Get ()
     std::string message_str;
     received_message_ >> message_str;
 
-    return json::parse(message_str);
+    json parsed = json::parse(message_str);
+    AddResponseMetadata(parsed);
+
+    return parsed;
   
   } else if (timedout_.load()) {
     return {{"error", 1}};

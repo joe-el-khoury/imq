@@ -32,6 +32,9 @@ private:
   unsigned CurrentTime ();
   bool HasTimedOut ();
 
+  // Adds callee info to the json.
+  void AddResponseMetadata (json&);
+
   void DoMessageCallback (zmqpp::message&);
   void DoTimeoutCallback ();
 
