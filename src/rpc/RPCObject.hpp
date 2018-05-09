@@ -19,9 +19,19 @@ protected:
   }
 
 public:
-  const HostAndPort& GetHostAndPort ()
+  const HostAndPort& GetHostAndPort () const
   {
     return host_and_port_;
+  }
+
+  const std::string& GetHost () const
+  {
+    return GetHostAndPort().host;
+  }
+
+  unsigned GetPort () const
+  {
+    return GetHostAndPort().port;
   }
 };
 
