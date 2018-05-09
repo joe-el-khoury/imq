@@ -27,7 +27,7 @@ public:
   RPCClient (const RPCClient&) = delete;
   ~RPCClient ();
 
-  rpc::RPCResponse Call (const RPCCall&);
+  rpc::RPCResponse Call (RPCCall&);
 };
 
 } // namespace rpc

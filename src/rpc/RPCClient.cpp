@@ -25,9 +25,13 @@ rpc::RPCClient::~RPCClient ()
   }
 }
 
-rpc::RPCResponse rpc::RPCClient::Call (const RPCCall& rpc_call)
+rpc::RPCResponse rpc::RPCClient::Call (RPCCall& rpc_call)
 {
   zmqpp::message message_to_send;
+
+  // Set the rpc call's metadata about the callee.
+  rpc_call.SetCalleeHost(GetHost());
+  rpc_call.SetCalleePort(GetPort());
 
   const std::string& rpc = rpc_call.GetRPCName();
   const json& args = rpc_call.GetArgs();
