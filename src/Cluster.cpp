@@ -53,6 +53,16 @@ void Cluster::AddNode (const std::string& hostname, unsigned port)
   }
 }
 
+void Cluster::RemoveNode (const std::string& hostname, unsigned port)
+{
+  if (!NodeInCluster(hostname, port)) {
+    return;
+  }
+
+  auto erase_iter = std::find(nodes_.begin(), nodes_.end(), HostAndPort(hostname, port));
+  nodes_.erase(erase_iter);
+}
+
 std::shared_ptr<rpc::RPCClient> Cluster::GetNodeClient (const std::string& hostname, unsigned port)
 {
   if (!NodeInCluster(hostname, port)) {

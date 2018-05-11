@@ -35,6 +35,7 @@ public:
   void Bootstrap (const std::string&, unsigned, const std::string&, unsigned);
   
   void AddNode (const std::string&, unsigned port);
+  void RemoveNode (const std::string&, unsigned port);
   bool NodeInCluster (const std::string&, unsigned port);
 
   std::shared_ptr<rpc::RPCClient> GetNodeClient (const std::string&, unsigned port);
