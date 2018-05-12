@@ -35,10 +35,28 @@ public:
   void Bootstrap (const std::string&, unsigned, const std::string&, unsigned);
   
   void AddNode (const std::string&, unsigned port);
+  void AddNode (const HostAndPort& hap)
+  {
+    AddNode(hap.host, hap.port);
+  }
+  
   void RemoveNode (const std::string&, unsigned port);
+  void RemoveNode (const HostAndPort& hap)
+  {
+    RemoveNode(hap.host, hap.port);
+  }
+  
   bool NodeInCluster (const std::string&, unsigned port);
+  bool NodeInCluster (const HostAndPort& hap)
+  {
+    return NodeInCluster(hap.host, hap.port);
+  }
 
   std::shared_ptr<rpc::RPCClient> GetNodeClient (const std::string&, unsigned port);
+  std::shared_ptr<rpc::RPCClient> GetNodeClient (const HostAndPort& hap)
+  {
+    return GetNodeClient(hap.host, hap.port);
+  }
 
   const std::vector<HostAndPort>& GetNodesInCluster ();
 };
