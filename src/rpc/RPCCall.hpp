@@ -30,6 +30,7 @@ private:
 
 public:
   RPCCall (const std::string&, const json&, bool=false);
+  RPCCall (const std::string&, bool=false);
   
   void OnMessageReceipt (MessageCallback);
   void OnTimeout (unsigned, TimeoutCallback);

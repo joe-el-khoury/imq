@@ -3,6 +3,9 @@
 rpc::RPCCall::RPCCall (const std::string& rpc, const json& args, bool async)
   : rpc_(rpc), args_(args), async_(async)
 {}
+rpc::RPCCall::RPCCall (const std::string& rpc, bool async)
+  : rpc_(rpc), async_(async)
+{}
 
 void rpc::RPCCall::OnMessageReceipt (MessageCallback message_receipt_callback)
 {
