@@ -32,8 +32,8 @@ public:
   RPCCall (const std::string&, const json&, bool=false);
   RPCCall (const std::string&, bool=false);
   
-  void OnMessageReceipt (MessageCallback);
-  void OnTimeout (unsigned, TimeoutCallback);
+  void SetMessageCallback (MessageCallback);
+  void SetTimeoutCallback (unsigned, TimeoutCallback);
 
   bool MessageCallbackIsSet () const { return message_callback_set_; }
 
