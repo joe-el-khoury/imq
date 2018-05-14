@@ -12,7 +12,7 @@ private:
   using json = nlohmann::json;
 
   using MessageCallback = std::function<void(const json&)>;
-  using TimeoutCallback = std::function<void()>;
+  using TimeoutCallback = std::function<void(const json&)>;
 
   bool message_callback_set_ = false;
   MessageCallback message_receipt_callback_;

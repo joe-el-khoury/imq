@@ -59,9 +59,14 @@ void rpc::RPCResponse::DoMessageCallback (zmqpp::message& message)
 
 void rpc::RPCResponse::DoTimeoutCallback ()
 {
-  if (rpc_call_.TimeoutIsSet()) {
-    rpc_call_.GetTimeoutCallback()();
+  if (!rpc_call_.TimeoutIsSet()) {
+    return;
   }
+
+  json error = {{"error", 1}};
+  AddResponseMetadata(error);
+
+  rpc_call_.GetTimeoutCallback()(error);
 }
 
 unsigned rpc::RPCResponse::CurrentTime ()
