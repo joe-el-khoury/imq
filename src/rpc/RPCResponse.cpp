@@ -65,7 +65,7 @@ void rpc::RPCResponse::DoTimeoutCallback ()
     return;
   }
 
-  json error = rpc::except::TimeoutExceptionAsJson();
+  json error = rpc::except::TimeoutException().AsJson();
   AddResponseMetadata(error);
 
   rpc_call_.GetTimeoutCallback()(error);
@@ -132,10 +132,10 @@ rpc::RPCResponse::json rpc::RPCResponse::Get ()
     return parsed;
   
   } else if (timedout_.load()) {
-    return rpc::except::TimeoutExceptionAsJson();
+    return rpc::except::TimeoutException().AsJson();
   
   } else {
     // Will never get here, but just in case.
-    return rpc::except::InternalExceptionAsJson();
+    return rpc::except::InternalException().AsJson();
   }
 }

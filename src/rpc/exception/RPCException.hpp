@@ -3,20 +3,44 @@
 
 #include "json.hpp"
 
+#include <string>
+
 namespace rpc {
 namespace except {
 
-using json = nlohmann::json;
-
-json TimeoutExceptionAsJson ()
+class RPCException
 {
-  return {{"error", "TimeoutException"}};
-}
+private:
+  using json = nlohmann::json;
 
-json InternalExceptionAsJson ()
+  std::string name_;
+
+protected:
+  RPCException (const std::string& name) : name_(name)
+  {}
+
+public:
+  json AsJson ()
+  {
+    return {{"error", name_}};
+  }
+};
+
+class TimeoutException : public RPCException
 {
-  return {{"error", "InternalException"}};
-}
+public:
+  TimeoutException ()
+    : RPCException("TimeoutException")
+  {}
+};
+
+class InternalException : public RPCException
+{
+public:
+  InternalException ()
+    : RPCException("InternalException")
+  {}
+};
 
 } // namespace error
 } // namespace rpc
