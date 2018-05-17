@@ -1,4 +1,6 @@
-#include "RPCResponse.hpp"
+#include "rpc/RPCResponse.hpp"
+
+#include "rpc/exception/RPCException.hpp"
 
 #include <chrono>
 
@@ -63,7 +65,7 @@ void rpc::RPCResponse::DoTimeoutCallback ()
     return;
   }
 
-  json error = {{"error", 1}};
+  json error = rpc::except::TimeoutExceptionAsJson();
   AddResponseMetadata(error);
 
   rpc_call_.GetTimeoutCallback()(error);
@@ -130,10 +132,10 @@ rpc::RPCResponse::json rpc::RPCResponse::Get ()
     return parsed;
   
   } else if (timedout_.load()) {
-    return {{"error", 1}};
+    return rpc::except::TimeoutExceptionAsJson();
   
   } else {
     // Will never get here, but just in case.
-    return {{"error", 1}};
+    return {};
   }
 }
