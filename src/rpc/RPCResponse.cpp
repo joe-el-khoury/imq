@@ -136,6 +136,6 @@ rpc::RPCResponse::json rpc::RPCResponse::Get ()
   
   } else {
     // Will never get here, but just in case.
-    return {};
+    return rpc::except::InternalExceptionAsJson();
   }
 }
