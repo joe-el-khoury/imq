@@ -10,6 +10,8 @@
 #include <chrono>
 #include <thread>
 
+using namespace std::chrono_literals;
+
 unsigned Health::GetCurrentTime ()
 {
   return std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -19,9 +21,21 @@ unsigned Health::GetCurrentTime ()
 
 void Health::PerformHealthChecks ()
 {
+  std::string my_host = MetaStore::GetHostAndPort().host;
+  unsigned my_port = MetaStore::GetHostAndPort().port;
+  
   running_.store(true);
   while (running_.load()) {
-    // do stuff
+    for (const HostAndPort& node : cluster_->GetNodesInCluster()) {
+      if (node.host == my_host && node.port == my_port) {
+        // Checking our own health doesn't make sense.
+        continue;
+      }
+
+      // do stuff
+    }
+
+    std::this_thread::sleep_for(5s);
   }
 }
 
