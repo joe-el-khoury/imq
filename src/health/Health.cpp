@@ -1,6 +1,7 @@
 #include "Health.hpp"
 
 #include "rpc/RPCServer.hpp"
+#include "rpc/store/RPCServerStore.hpp"
 
 #include "meta/MetaStore.hpp"
 
@@ -56,7 +57,8 @@ void Health::Run ()
   std::string host = MetaStore::GetHost();
   unsigned port = MetaStore::GetPort();
 
-  (rpc_server_store_.GetRPCServer(host, port))->AddRPC(
+  rpc::RPCServerStore rpc_server_store;
+  (rpc_server_store.GetRPCServer(host, port))->AddRPC(
       "CheckHealth", std::bind(&Health::CheckHealthRPC, this, std::placeholders::_1));
 
   StartHealthCheckThread();

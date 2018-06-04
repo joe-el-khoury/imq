@@ -15,9 +15,9 @@ class Health
 private:
   using json = nlohmann::json;
 
+  // To get nodes in cluster.
   Cluster* cluster_ = &Cluster::GetInstance();
-  rpc::RPCServerStore rpc_server_store_;
-
+  
   unsigned GetCurrentTime ();
 
   void PerformHealthChecks ();
