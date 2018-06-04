@@ -1,5 +1,7 @@
 #include "Health.hpp"
 
+#include "rpc/RPCCall.hpp"
+
 #include "rpc/RPCServer.hpp"
 #include "rpc/store/RPCServerStore.hpp"
 
@@ -20,6 +22,18 @@ unsigned Health::GetCurrentTime ()
   ).count();
 }
 
+void Health::HealthyNodeCallback (const json& response)
+{
+  std::string callee_host = response["callee_info"]["host"].get<std::string>();
+  unsigned callee_port = response["callee_info"]["port"].get<unsigned>();
+}
+
+void Health::TimedoutNodeCallback (const json& response)
+{
+  std::string callee_host = response["callee_info"]["host"].get<std::string>();
+  unsigned callee_port = response["callee_info"]["port"].get<unsigned>();
+}
+
 void Health::PerformHealthChecks ()
 {
   std::string my_host = MetaStore::GetHostAndPort().host;
@@ -27,6 +41,11 @@ void Health::PerformHealthChecks ()
   
   running_.store(true);
   while (running_.load()) {
+    // The call we'll use for each node.
+    rpc::RPCCall rpc_call("CheckHealth", /* async */ true);
+    rpc_call.SetMessageCallback(std::bind(&Health::HealthyNodeCallback, this, std::placeholders::_1));
+    rpc_call.SetTimeoutCallback(3000, std::bind(&Health::TimedoutNodeCallback, this, std::placeholders::_1));
+    
     for (const utils::HostAndPort& node : cluster_->GetNodesInCluster()) {
       if (node.host == my_host && node.port == my_port) {
         // Checking our own health doesn't make sense.

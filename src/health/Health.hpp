@@ -28,6 +28,10 @@ private:
 
   json CheckHealthRPC (const json&);
 
+  // RPC Callbacks.
+  void HealthyNodeCallback (const json&);
+  void TimedoutNodeCallback (const json&);
+
 public:
   void Run ();
   void Stop ();
