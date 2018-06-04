@@ -2,4 +2,4 @@
 
 #include "utils/HostAndPort.hpp"
 
-HostAndPort MetaStore::my_host_and_port_;
+utils::HostAndPort MetaStore::my_host_and_port_;

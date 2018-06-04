@@ -27,7 +27,7 @@ void Health::PerformHealthChecks ()
   
   running_.store(true);
   while (running_.load()) {
-    for (const HostAndPort& node : cluster_->GetNodesInCluster()) {
+    for (const utils::HostAndPort& node : cluster_->GetNodesInCluster()) {
       if (node.host == my_host && node.port == my_port) {
         // Checking our own health doesn't make sense.
         continue;

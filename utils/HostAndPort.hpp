@@ -3,6 +3,8 @@
 
 #include <string>
 
+namespace utils {
+
 struct HostAndPort
 {
   std::string host;
@@ -22,12 +24,15 @@ struct HostAndPort
     return host == other.host && port == other.port;
   }
 };
+
+} // namespace utils
+
 namespace std
 {
 template<>
-struct hash<HostAndPort>
+struct hash<utils::HostAndPort>
 {
-  std::size_t operator() (const HostAndPort& host_and_port) const
+  std::size_t operator() (const utils::HostAndPort& host_and_port) const
   {
     const std::string& host = host_and_port.host;
     unsigned port = host_and_port.port;
@@ -35,6 +40,6 @@ struct hash<HostAndPort>
     return std::hash<std::string>()(host + std::to_string(port));
   }
 };
-}
+} // namespace std
 
 #endif // HOSTANDPORT_HPP

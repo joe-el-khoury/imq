@@ -1,7 +1,7 @@
 #ifndef RPCCALL_HPP
 #define RPCCALL_HPP
 
-#include "../json.hpp"
+#include "json.hpp"
 #include "utils/HostAndPort.hpp"
 
 namespace rpc {
@@ -26,7 +26,7 @@ private:
   bool async_;
 
   // Data about the node we're calling.
-  HostAndPort callee_info_;
+  utils::HostAndPort callee_info_;
 
 public:
   RPCCall (const std::string&, const json&, bool=false);

@@ -1,7 +1,7 @@
 #ifndef RPCOBJECT_HPP
 #define RPCOBJECT_HPP
 
-#include "../../utils/HostAndPort.hpp"
+#include "utils/HostAndPort.hpp"
 
 namespace rpc {
 
@@ -9,7 +9,7 @@ namespace rpc {
 class RPCObject
 {
 private:
-  HostAndPort host_and_port_;
+  utils::HostAndPort host_and_port_;
 
 protected:
   void SetHostAndPort (const std::string& host, unsigned port)
@@ -19,7 +19,7 @@ protected:
   }
 
 public:
-  const HostAndPort& GetHostAndPort () const
+  const utils::HostAndPort& GetHostAndPort () const
   {
     return host_and_port_;
   }

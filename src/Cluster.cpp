@@ -41,13 +41,13 @@ void Cluster::Bootstrap (const std::string& requester_host, unsigned requester_p
 
 bool Cluster::NodeInCluster (const std::string& hostname, unsigned port)
 {
-  HostAndPort host_and_port(hostname, port);
+  utils::HostAndPort host_and_port(hostname, port);
   return std::find(nodes_.begin(), nodes_.end(), host_and_port) != nodes_.end();
 }
 
 void Cluster::AddNode (const std::string& hostname, unsigned port)
 {
-  HostAndPort host_and_port(hostname, port);
+  utils::HostAndPort host_and_port(hostname, port);
   if (!NodeInCluster(hostname, port)) {
     nodes_.push_back(host_and_port);
   }
@@ -59,7 +59,7 @@ void Cluster::RemoveNode (const std::string& hostname, unsigned port)
     return;
   }
 
-  auto erase_iter = std::find(nodes_.begin(), nodes_.end(), HostAndPort(hostname, port));
+  auto erase_iter = std::find(nodes_.begin(), nodes_.end(), utils::HostAndPort(hostname, port));
   nodes_.erase(erase_iter);
 }
 
@@ -72,7 +72,7 @@ std::shared_ptr<rpc::RPCClient> Cluster::GetNodeClient (const std::string& hostn
   return rpc_client_store_.GetRPCClient(hostname, port);
 }
 
-const std::vector<HostAndPort>& Cluster::GetNodesInCluster ()
+const std::vector<utils::HostAndPort>& Cluster::GetNodesInCluster ()
 {
   return nodes_;
 }

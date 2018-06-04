@@ -20,7 +20,7 @@ private:
 
   rpc::RPCClientStore rpc_client_store_;
   
-  std::vector<HostAndPort> nodes_;
+  std::vector<utils::HostAndPort> nodes_;
 
   Cluster ();
 
@@ -35,30 +35,30 @@ public:
   void Bootstrap (const std::string&, unsigned, const std::string&, unsigned);
   
   void AddNode (const std::string&, unsigned port);
-  void AddNode (const HostAndPort& hap)
+  void AddNode (const utils::HostAndPort& hap)
   {
     AddNode(hap.host, hap.port);
   }
   
   void RemoveNode (const std::string&, unsigned port);
-  void RemoveNode (const HostAndPort& hap)
+  void RemoveNode (const utils::HostAndPort& hap)
   {
     RemoveNode(hap.host, hap.port);
   }
   
   bool NodeInCluster (const std::string&, unsigned port);
-  bool NodeInCluster (const HostAndPort& hap)
+  bool NodeInCluster (const utils::HostAndPort& hap)
   {
     return NodeInCluster(hap.host, hap.port);
   }
 
   std::shared_ptr<rpc::RPCClient> GetNodeClient (const std::string&, unsigned port);
-  std::shared_ptr<rpc::RPCClient> GetNodeClient (const HostAndPort& hap)
+  std::shared_ptr<rpc::RPCClient> GetNodeClient (const utils::HostAndPort& hap)
   {
     return GetNodeClient(hap.host, hap.port);
   }
 
-  const std::vector<HostAndPort>& GetNodesInCluster ();
+  const std::vector<utils::HostAndPort>& GetNodesInCluster ();
 };
 
 #endif // CLUSTER_HPP

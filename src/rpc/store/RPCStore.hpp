@@ -5,9 +5,8 @@
 
 #include "utils/HostAndPort.hpp"
 
-#include <unordered_map>
-
 #include <memory>
+#include <unordered_map>
 
 namespace rpc {
 
@@ -17,12 +16,12 @@ private:
   friend class RPCClientStore;
   friend class RPCServerStore;
 
-  std::unordered_map<HostAndPort, std::shared_ptr<rpc::RPCObject>> rpc_objects_;
+  std::unordered_map<utils::HostAndPort, std::shared_ptr<rpc::RPCObject>> rpc_objects_;
 
   void AddRPCObject (const std::shared_ptr<rpc::RPCObject>&);
 
-  bool HasRPCObject (const HostAndPort&);
-  std::shared_ptr<rpc::RPCObject> GetRPCObject(const HostAndPort&);
+  bool HasRPCObject (const utils::HostAndPort&);
+  std::shared_ptr<rpc::RPCObject> GetRPCObject(const utils::HostAndPort&);
 
   // Singleton
   RPCStore ()
