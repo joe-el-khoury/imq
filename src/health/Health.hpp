@@ -10,6 +10,8 @@
 #include <thread>
 #include <atomic>
 #include <unordered_set>
+#include <mutex>
+#include <thread>
 
 class Health
 {
@@ -24,22 +26,48 @@ private:
   
   // Map from the address of the potentially failed node and the number of retries.
   std::unordered_map<utils::HostAndPort, int> potentially_failed_nodes_and_num_retires_;
+  std::mutex map_mutex;
 
+  void MarkAsPotentiallyFailing (const std::string& host, unsigned port)
+  {
+    std::lock_guard<std::mutex> lk(map_mutex);
+    
+    utils::HostAndPort hap(host, port);
+    potentially_failed_nodes_and_num_retires_.insert({hap, 0});
+  }
+  void UnmarkAsPotentiallyFailing (const std::string& host, unsigned port)
+  {
+    std::lock_guard<std::mutex> lk(map_mutex);
+    
+    utils::HostAndPort hap(host, port);
+    auto iter = potentially_failed_nodes_and_num_retires_.find(hap);
+    if (iter != potentially_failed_nodes_and_num_retires_.end()) {
+      potentially_failed_nodes_and_num_retires_.erase(iter);
+    }
+  }
   bool IsPotentiallyFailing (const std::string& host, unsigned port)
   {
+    std::lock_guard<std::mutex> lk(map_mutex);
+    
     utils::HostAndPort hap(host, port);
     return potentially_failed_nodes_and_num_retires_.find(hap) 
       != potentially_failed_nodes_and_num_retires_.end();
   }
   unsigned GetNumberOfRetriesForNode (const std::string& host, unsigned port)
   {
+    std::lock_guard<std::mutex> lk(map_mutex);
+    
     utils::HostAndPort hap(host, port);
     if (IsPotentiallyFailing(host, port)) {
       return potentially_failed_nodes_and_num_retires_[hap];
+    } else {
+      return 0;
     }
   }
   void IncrementNumberOfRetriesForNode (const std::string& host, unsigned port)
   {
+    std::lock_guard<std::mutex> lk(map_mutex);
+    
     utils::HostAndPort hap(host, port);
     potentially_failed_nodes_and_num_retires_[hap]++;
   }
