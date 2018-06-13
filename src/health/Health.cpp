@@ -3,6 +3,8 @@
 #include "rpc/RPCCall.hpp"
 
 #include "rpc/RPCServer.hpp"
+#include "rpc/RPCClient.hpp"
+
 #include "rpc/store/RPCServerStore.hpp"
 
 #include "meta/MetaStore.hpp"
@@ -26,12 +28,37 @@ void Health::HealthyNodeCallback (const json& response)
 {
   std::string callee_host = response["callee_info"]["host"].get<std::string>();
   unsigned callee_port = response["callee_info"]["port"].get<unsigned>();
+
+  // We should unmark the node as potentially failing if it's marked.
+  
+  if (IsPotentiallyFailing(callee_host, callee_port)) {
+    UnmarkAsPotentiallyFailing(callee_host, callee_port);
+  }
 }
 
 void Health::TimedoutNodeCallback (const json& response)
 {
   std::string callee_host = response["callee_info"]["host"].get<std::string>();
   unsigned callee_port = response["callee_info"]["port"].get<unsigned>();
+
+  // So the node we called timed out. We should mark it as potentially failing if
+  // it's not marked already, and evict it from the cluster if it's been failing for
+  // a long time.
+  
+  if (IsPotentiallyFailing(callee_host, callee_port)) {
+    int num_retries_so_far = GetNumberOfRetriesForNode(callee_host, callee_port);
+    
+    if (num_retries_so_far >= REMOVE_AFTER_NUM_RETRIES) {
+      // Oh no, this node is unhealthy! We need to evict it.
+      RemoveNodeFromCluster(callee_host, callee_port);
+
+    } else {
+      IncrementNumberOfRetriesForNode(callee_host, callee_port);
+    }
+  
+  } else {
+    MarkAsPotentiallyFailing(callee_host, callee_port);
+  }
 }
 
 void Health::PerformHealthChecks ()
@@ -51,8 +78,10 @@ void Health::PerformHealthChecks ()
         // Checking our own health doesn't make sense.
         continue;
       }
-
-      // do stuff
+      
+      // Get the node.
+      std::shared_ptr<rpc::RPCClient> node_client = cluster_->GetNodeClient(node);
+      node_client->Call(rpc_call);
     }
 
     std::this_thread::sleep_for(5s);
