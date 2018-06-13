@@ -56,11 +56,11 @@ private:
   }
   unsigned GetNumberOfRetriesForNode (const std::string& host, unsigned port)
   {
-    std::lock_guard<std::mutex> lk(map_mutex_);
-    
     utils::HostAndPort hap(host, port);
     if (IsPotentiallyFailing(host, port)) {
+      std::lock_guard<std::mutex> lk(map_mutex_);
       return potentially_failed_nodes_and_num_retires_[hap];
+    
     } else {
       return 0;
     }
