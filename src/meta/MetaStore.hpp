@@ -2,11 +2,14 @@
 #define METASTORE_HPP
 
 #include "utils/HostAndPort.hpp"
+#include "State.hpp"
 
 class MetaStore
 {
 private:
   static utils::HostAndPort my_host_and_port_;
+  static State my_state_;
+
 public:
   static void SetHost (const std::string& host) { MetaStore::my_host_and_port_.host = host; }
   static void SetPort (unsigned port) { MetaStore::my_host_and_port_.port = port; }
