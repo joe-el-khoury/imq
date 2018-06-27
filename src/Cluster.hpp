@@ -2,11 +2,10 @@
 #define CLUSTER_HPP
 
 #include "json.hpp"
-
 #include "rpc/RPCClient.hpp"
 #include "rpc/store/RPCClientStore.hpp"
-
 #include "utils/HostAndPort.hpp"
+#include "State.hpp"
 
 #include <unordered_map>
 #include <list>
@@ -22,6 +21,9 @@ private:
   
   std::vector<utils::HostAndPort> nodes_;
 
+  bool cluster_has_leader_ = false;
+  utils::HostAndPort leader_;
+
   Cluster ();
 
 public:
@@ -30,6 +32,20 @@ public:
 
   // Singleton.
   static Cluster& GetInstance ();
+
+  bool HasLeader ()
+  {
+    return cluster_has_leader_;
+  }
+  utils::HostAndPort GetLeader ()
+  {
+    return leader_;
+  }
+  void SetLeader (const utils::HostAndPort& leader)
+  {
+    leader_ = leader;
+    cluster_has_leader_ = true;
+  }
 
   // Bootstrap the cluster by connecting to the node with cluster info.
   void Bootstrap (const std::string&, unsigned, const std::string&, unsigned);

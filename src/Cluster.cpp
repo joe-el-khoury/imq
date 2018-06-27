@@ -2,7 +2,6 @@
 
 #include "rpc/RPCCall.hpp"
 #include "rpc/RPCResponse.hpp"
-
 #include "utils/HostAndPort.hpp"
 
 #include <stdexcept>
@@ -59,8 +58,17 @@ void Cluster::RemoveNode (const std::string& hostname, unsigned port)
     return;
   }
 
+  utils::HostAndPort node_to_remove(hostname, port);
+  if (HasLeader()) {
+    if (node_to_remove == leader_) {
+      cluster_has_leader_ = false;
+    }
+  }
+  
   auto erase_iter = std::find(nodes_.begin(), nodes_.end(), utils::HostAndPort(hostname, port));
-  nodes_.erase(erase_iter);
+  if (erase_iter != nodes_.end()) {
+    nodes_.erase(erase_iter);
+  }
 }
 
 std::shared_ptr<rpc::RPCClient> Cluster::GetNodeClient (const std::string& hostname, unsigned port)
