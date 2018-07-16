@@ -58,7 +58,7 @@ void rpc::RPCServer::Run ()
     return;
   }
   
- server_thread_ = new std::thread(&rpc::RPCServer::RunServer, this);
+  server_thread_ = new std::thread(&rpc::RPCServer::RunServer, this);
 }
 
 void rpc::RPCServer::Stop ()
