@@ -2,13 +2,15 @@
 #define HOSTANDPORT_HPP
 
 #include <string>
+#include <iostream>
+#include <sstream>
 
 namespace utils {
 
 struct HostAndPort
 {
-  std::string host;
-  unsigned port;
+  std::string host = "";
+  unsigned port = 0;
 
   HostAndPort ()
   {}
@@ -17,6 +19,22 @@ struct HostAndPort
   {
     host = host_;
     port = port_;
+  }
+
+  std::string ToString ()
+  {
+    return host + ":" + std::to_string(port);
+  }
+
+  static HostAndPort FromString (const std::string& s)
+  {
+    utils::HostAndPort ret;
+
+    unsigned colon_idx = s.find(':');
+    ret.host = s.substr(0, colon_idx);
+    ret.port = std::stoi(s.substr(colon_idx+1), nullptr);
+
+    return ret;
   }
 
   bool operator== (const HostAndPort& other) const
