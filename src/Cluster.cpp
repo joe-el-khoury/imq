@@ -4,10 +4,15 @@
 #include "rpc/RPCResponse.hpp"
 #include "utils/HostAndPort.hpp"
 
+#include <string>
 #include <stdexcept>
 
 Cluster::Cluster ()
-{}
+{
+  for (int i = 0; i < MAX_NUM_NODES; ++i) {
+    nodes_.push_back(utils::HostAndPort());
+  }
+}
 
 Cluster& Cluster::GetInstance ()
 {
@@ -31,43 +36,50 @@ void Cluster::Bootstrap (const std::string& requester_host, unsigned requester_p
   auto nodes = json_response["nodes"];
   // Add the cluster members.
   for (auto it = nodes.begin(); it != nodes.end(); ++it) {
-    const std::string& hostname = it.key();
-    for (unsigned port : it.value()) {
-      AddNode(hostname, port);
+    unsigned idx = std::stoi(it.key(), nullptr);
+    for (const std::string& node_str : it.value()) {
+      utils::HostAndPort node = utils::HostAndPort::FromString(node_str);
+
+      AddNode(idx, node.host, node.port);
     }
   }
 }
 
 bool Cluster::NodeInCluster (const std::string& hostname, unsigned port)
 {
-  utils::HostAndPort host_and_port(hostname, port);
-  return std::find(nodes_.begin(), nodes_.end(), host_and_port) != nodes_.end();
+  utils::HostAndPort finding(hostname, port);
+  for (const utils::HostAndPort& node : nodes_) {
+    if (node == finding) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 void Cluster::AddNode (const std::string& hostname, unsigned port)
 {
-  utils::HostAndPort host_and_port(hostname, port);
-  if (!NodeInCluster(hostname, port)) {
-    nodes_.push_back(host_and_port);
+  for (int i = 0; i < MAX_NUM_NODES; ++i) {
+    if (nodes_[i].host == "") {
+      nodes_[i] = utils::HostAndPort(hostname, port);
+    }
   }
+}
+
+void Cluster::AddNode (unsigned idx, const std::string& hostname, unsigned port)
+{
+  // We'll assume there's nothing at this index.
+  nodes_[idx] = utils::HostAndPort(hostname, port);
 }
 
 void Cluster::RemoveNode (const std::string& hostname, unsigned port)
 {
-  if (!NodeInCluster(hostname, port)) {
-    return;
-  }
-
-  utils::HostAndPort node_to_remove(hostname, port);
-  if (HasLeader()) {
-    if (node_to_remove == leader_) {
-      cluster_has_leader_ = false;
+  utils::HostAndPort to_remove(hostname, port);
+  for (int i = 0; i < MAX_NUM_NODES; ++i) {
+    utils::HostAndPort node = nodes_[i];
+    if (node == to_remove) {
+      nodes_[i] = utils::HostAndPort();
     }
-  }
-  
-  auto erase_iter = std::find(nodes_.begin(), nodes_.end(), utils::HostAndPort(hostname, port));
-  if (erase_iter != nodes_.end()) {
-    nodes_.erase(erase_iter);
   }
 }
 
@@ -80,7 +92,19 @@ std::shared_ptr<rpc::RPCClient> Cluster::GetNodeClient (const std::string& hostn
   return rpc_client_store_.GetRPCClient(hostname, port);
 }
 
-const std::vector<utils::HostAndPort>& Cluster::GetNodesInCluster ()
+std::vector<std::pair<int, utils::HostAndPort>> Cluster::GetNodesWithIdxInCluster ()
+{
+  std::vector<std::pair<int, utils::HostAndPort>> nodes;
+  for (int i = 0; i < MAX_NUM_NODES; ++i) {
+    utils::HostAndPort node = nodes_[i];
+
+    nodes.push_back({i, node});
+  }
+
+  return nodes;
+}
+
+std::vector<utils::HostAndPort> Cluster::GetNodesInCluster ()
 {
   return nodes_;
 }

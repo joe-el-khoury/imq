@@ -27,23 +27,18 @@ IMQNode::json IMQNode::GetNodesInCluster (const json& j)
     }
   }
   
-  std::vector<utils::HostAndPort> nodes = cluster->GetNodesInCluster();
+  std::vector<std::pair<int, utils::HostAndPort>> nodes = cluster->GetNodesWithIdxInCluster();
   
   json ret;
   // The nodes will reside in the nodes_part of the json.
   ret["nodes"] = {};
   auto& nodes_part = ret["nodes"];
   
-  for (const auto& node : nodes) {
-    const std::string& host = node.host;
-    unsigned port = node.port;
+  for (const auto& idx_and_node : nodes) {
+    int idx = idx_and_node.first;
+    utils::HostAndPort node = idx_and_node.second;
 
-    if (nodes_part.find(host) != nodes_part.end()) {
-      nodes_part[host].push_back(port);
-    
-    } else {
-      nodes_part[host] = std::vector<unsigned>(1, port);
-    }
+    nodes_part[idx] = node.ToString();
   }
 
   return ret;

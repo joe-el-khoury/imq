@@ -8,8 +8,7 @@
 #include "State.hpp"
 
 #include <unordered_map>
-#include <list>
-
+#include <utility>
 #include <memory>
 
 class Cluster
@@ -18,7 +17,8 @@ private:
   using json = nlohmann::json;
 
   rpc::RPCClientStore rpc_client_store_;
-  
+
+  const int MAX_NUM_NODES = 30;
   std::vector<utils::HostAndPort> nodes_;
 
   bool cluster_has_leader_ = false;
@@ -50,31 +50,33 @@ public:
   // Bootstrap the cluster by connecting to the node with cluster info.
   void Bootstrap (const std::string&, unsigned, const std::string&, unsigned);
   
-  void AddNode (const std::string&, unsigned port);
+  void AddNode (const std::string&, unsigned);
+  void AddNode (unsigned, const std::string&, unsigned);
   void AddNode (const utils::HostAndPort& hap)
   {
     AddNode(hap.host, hap.port);
   }
   
-  void RemoveNode (const std::string&, unsigned port);
+  void RemoveNode (const std::string&, unsigned);
   void RemoveNode (const utils::HostAndPort& hap)
   {
     RemoveNode(hap.host, hap.port);
   }
   
-  bool NodeInCluster (const std::string&, unsigned port);
+  bool NodeInCluster (const std::string&, unsigned);
   bool NodeInCluster (const utils::HostAndPort& hap)
   {
     return NodeInCluster(hap.host, hap.port);
   }
 
-  std::shared_ptr<rpc::RPCClient> GetNodeClient (const std::string&, unsigned port);
+  std::shared_ptr<rpc::RPCClient> GetNodeClient (const std::string&, unsigned);
   std::shared_ptr<rpc::RPCClient> GetNodeClient (const utils::HostAndPort& hap)
   {
     return GetNodeClient(hap.host, hap.port);
   }
 
-  const std::vector<utils::HostAndPort>& GetNodesInCluster ();
+  std::vector<std::pair<int, utils::HostAndPort>> GetNodesWithIdxInCluster ();
+  std::vector<utils::HostAndPort> GetNodesInCluster ();
 };
 
 #endif // CLUSTER_HPP
