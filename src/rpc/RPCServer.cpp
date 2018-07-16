@@ -20,6 +20,8 @@ void rpc::RPCServer::InitWorkerPool ()
 
 rpc::RPCServer::RPCServer (const std::string& host, unsigned port) : host_(host), port_(port), ctx_()
 {
+  running_.store(false);
+  
   SetHostAndPort(host, port);
   
   InitSockets();
@@ -48,6 +50,7 @@ void rpc::RPCServer::RunServer ()
 
   // Always start the worker pool after binding the ipc socket.
   worker_pool_->Start();
+  running_.store(true);
   
   zmqpp::proxy(*frontend_, *backend_); 
 }
@@ -65,6 +68,9 @@ void rpc::RPCServer::Stop ()
 {
   running_.store(false);
   if (server_thread_) {
+    worker_pool_->Stop();
     server_thread_->join();
   }
+  server_thread_ = nullptr;
+  delete server_thread_;
 }

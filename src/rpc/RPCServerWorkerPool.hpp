@@ -4,6 +4,7 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <atomic>
 
 #include "RPC.hpp"
 
@@ -17,6 +18,8 @@ private:
   using json = nlohmann::json;
   using RPCFunc = std::function<json(const json)>;
   using RPCResult = json;
+
+  std::atomic<bool> running_;
 
   std::mutex rpcs_mutex_;
   std::unordered_map<std::string, RPCFunc> rpcs_;
@@ -54,6 +57,7 @@ public:
   void AddRPC (const std::string&, const RPCFunc&);
   
   void Start ();
+  void Stop ();
 };
 
 }

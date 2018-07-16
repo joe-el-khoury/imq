@@ -9,11 +9,18 @@ rpc::RPCServerWorkerPool::RPCServerWorkerPool (unsigned num_workers, const std::
 
 void rpc::RPCServerWorkerPool::Start ()
 {
+  running_.store(true);
+  
   unsigned num_workers = server_workers_.size();
   for (unsigned i = 0; i < num_workers; ++i) {
     worker_sockets_[i] = CreateWorkerSocket();
     server_workers_[i] = CreateServerWorker(worker_sockets_[i]);
   }
+}
+
+void rpc::RPCServerWorkerPool::Stop ()
+{
+  running_.store(false);
 }
 
 void rpc::RPCServerWorkerPool::AddRPC (const std::string& rpc_name, const RPCFunc& rpc_func)
@@ -101,7 +108,7 @@ zmqpp::message rpc::RPCServerWorkerPool::ConstructErrorMessage (const std::strin
 
 void rpc::RPCServerWorkerPool::Work (zmqpp::socket* worker_socket)
 {
-  while (true) {
+  while (running_.load()) {
     RPCAndArgs rpc_and_args;
 
     rpc::RPCMessage received_message = rpc::ReceiveMessage(worker_socket);
