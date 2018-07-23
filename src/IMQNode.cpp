@@ -37,9 +37,6 @@ IMQNode::json IMQNode::GetNodesInCluster (const json& j)
   for (const auto& idx_and_node : nodes) {
     int idx = idx_and_node.first;
     utils::HostAndPort node = idx_and_node.second;
-    if (node.host == "") {
-      continue;
-    }
 
     nodes_part[std::to_string(idx)] = node.ToString();
   }
