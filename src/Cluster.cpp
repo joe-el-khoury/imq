@@ -80,6 +80,7 @@ void Cluster::RemoveNode (const std::string& hostname, unsigned port)
     utils::HostAndPort node = nodes_[i];
     if (node == to_remove) {
       nodes_[i] = utils::HostAndPort();
+      break;
     }
   }
 }
