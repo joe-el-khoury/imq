@@ -32,7 +32,7 @@ void Cluster::Bootstrap (const std::string& requester_host, unsigned requester_p
   rpc::RPCResponse rpc_response = node->Call(rpc_call);
 
   json json_response = rpc_response.Get();
-
+  
   auto nodes = json_response["nodes"];
   // Add the cluster members.
   for (auto it = nodes.begin(); it != nodes.end(); ++it) {
@@ -62,6 +62,7 @@ void Cluster::AddNode (const std::string& hostname, unsigned port)
   for (int i = 0; i < MAX_NUM_NODES; ++i) {
     if (nodes_[i].host == "") {
       nodes_[i] = utils::HostAndPort(hostname, port);
+      break;
     }
   }
 }
