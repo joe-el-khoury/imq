@@ -98,8 +98,9 @@ std::vector<std::pair<int, utils::HostAndPort>> Cluster::GetNodesWithIdxInCluste
   std::vector<std::pair<int, utils::HostAndPort>> nodes;
   for (int i = 0; i < MAX_NUM_NODES; ++i) {
     utils::HostAndPort node = nodes_[i];
-
-    nodes.push_back({i, node});
+    if (node.host != "") {
+      nodes.push_back({i, node});
+    }
   }
 
   return nodes;
@@ -107,5 +108,12 @@ std::vector<std::pair<int, utils::HostAndPort>> Cluster::GetNodesWithIdxInCluste
 
 std::vector<utils::HostAndPort> Cluster::GetNodesInCluster ()
 {
-  return nodes_;
+  std::vector<utils::HostAndPort> nodes;
+  for (const utils::HostAndPort& node : nodes_) {
+    if (node.host != "") {
+      nodes.push_back(node);
+    }
+  }
+
+  return nodes;
 }
